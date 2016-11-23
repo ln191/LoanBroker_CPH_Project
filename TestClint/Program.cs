@@ -37,8 +37,8 @@ namespace TestClint
             message[1] = amount;
             message[2] = duration;
             string msg = Translator.CreateStringMessage(message);
-            MessageSender sender = new MessageSender();
-            sender.Send(msg, "requestQueue", "replyQueue");
+            RabbitSender sender = new RabbitSender("loanRequest");
+            sender.Send(msg);
             Console.WriteLine("our request has now been send, {0} ", msg);
             Console.Read();
         }

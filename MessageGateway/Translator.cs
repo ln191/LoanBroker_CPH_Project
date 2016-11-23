@@ -10,7 +10,7 @@ namespace MessageGateway
     {
         public static string CreateStringMessage(string[] strArray)
         {
-            return string.Join(" ", strArray);
+            return string.Join("#", strArray);
         }
     }
 }

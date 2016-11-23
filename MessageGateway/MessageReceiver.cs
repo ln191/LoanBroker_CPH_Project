@@ -23,15 +23,15 @@ namespace MessageGateway
                                      arguments: null);
 
                 var consumer = new EventingBasicConsumer(channel);
+                channel.BasicConsume(queue: queue,
+                                                     noAck: true,
+                                                     consumer: consumer);
                 consumer.Received += (model, ea) =>
                 {
                     var body = ea.Body;
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine(" [x] Received {0}", message);
                 };
-                channel.BasicConsume(queue: queue,
-                                     noAck: true,
-                                     consumer: consumer);
             }
         }
     }
