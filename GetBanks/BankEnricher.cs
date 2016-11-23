@@ -38,6 +38,9 @@ namespace GetBanks
 
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
+            channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            //so it will take one message at the time
             //so it will take one message at the time
             channel.BasicQos(0, 1, false);
         }
