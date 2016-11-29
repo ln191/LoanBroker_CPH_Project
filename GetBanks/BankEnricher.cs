@@ -60,8 +60,13 @@ namespace GetBanks
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine(" [x] Received {0}", message);
 
+                string[] values = message.Split('#');
+                string ssn = values[0];
+                string amount = values[1];
+                string duration = values[2];
+                string creditScore = values[3];
                 //Enrich the message, add the credit score string from GetCreditScore to message string
-                string[] enrich = new string[] { message, GetBank() };
+                string[] enrich = new string[] { message, GetBank(ssn, amount, duration, creditScore) };
                 message = string.Join("#", enrich);
                 //Send()  send the message to the bank enricher channel
                 Send(message, header);
@@ -70,7 +75,7 @@ namespace GetBanks
             };
         }
 
-        private string GetBank()
+        private string GetBank(string ssn, string amount, string duration, string creditScore)
         {
             return "Dansk Bank";
         }
