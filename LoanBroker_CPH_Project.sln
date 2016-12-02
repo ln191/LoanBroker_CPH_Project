@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditScore", "CreditScore\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetBanks", "GetBanks\GetBanks.csproj", "{26310710-A959-4421-A3A6-30BDF4253B0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipientList", "RecipientList\RecipientList.csproj", "{98D5E90A-B585-474A-9231-CB3C6F6E3581}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslatorJsonBank", "TranslatorJsonBank\TranslatorJsonBank.csproj", "{51EC3C8F-E9C9-400D-B221-B5C4816C7615}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{26310710-A959-4421-A3A6-30BDF4253B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26310710-A959-4421-A3A6-30BDF4253B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26310710-A959-4421-A3A6-30BDF4253B0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98D5E90A-B585-474A-9231-CB3C6F6E3581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98D5E90A-B585-474A-9231-CB3C6F6E3581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98D5E90A-B585-474A-9231-CB3C6F6E3581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98D5E90A-B585-474A-9231-CB3C6F6E3581}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51EC3C8F-E9C9-400D-B221-B5C4816C7615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51EC3C8F-E9C9-400D-B221-B5C4816C7615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51EC3C8F-E9C9-400D-B221-B5C4816C7615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51EC3C8F-E9C9-400D-B221-B5C4816C7615}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
