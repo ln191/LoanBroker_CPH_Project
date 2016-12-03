@@ -14,7 +14,7 @@ namespace GetBanks
     {
         //private const string HostName = "localhost";
         //private const string UserName = "guest";
-        //private const string Password = "guest";
+        //private const string Password = "guest"
         private string receiveQueueName;
 
         private string sendToQueueName;
