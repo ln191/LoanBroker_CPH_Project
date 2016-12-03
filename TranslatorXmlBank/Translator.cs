@@ -8,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TranslatorJsonBank
+namespace TranslatorXmlBank
 {
-    public class translator
+    public class Translator
     {
         private string receiveQueueName;
         private RabbitConnection rabbitConn;
 
-        public translator(string receiveQueueName)
+        public Translator(string receiveQueueName)
         {
             rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
@@ -39,18 +39,25 @@ namespace TranslatorJsonBank
 
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
-                //the backslashes is used to say that the quotes is a part of the string
-                string message = "{ \"ssn\":" + loanRequest.SNN
+                //handles the set condition "The loan duration will be calculated from 1/1 1970. Therefore loan duration of 3 years must look as the above example."
+                DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
 
-                 + ",\"creditScore\":" + loanRequest.CreditScore.ToString()
+                //setting up the message to the banks XML format
+                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3}</loanDuration></LoanRequest>",
 
-                 + ",\"loanAmount\":" + loanRequest.Amount.ToString()
+                 loanRequest.SNN,
 
-                 + ",\"loanDuration\":" + loanRequest.Duration.ToString() + " }";
+                 loanRequest.CreditScore.ToString(),
 
-                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
+                 loanRequest.Amount.ToString(),
+
+                 dateDuration.ToString()
+
+                 );
+
+                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankXML", "fanout");
                 //Send()  send the message to the bank enricher Channel
-                rabbitConn.Send(message, header, false, "cphbusiness.bankJSON");
+                rabbitConn.Send(message, header, false, "cphbusiness.bankXML");
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
