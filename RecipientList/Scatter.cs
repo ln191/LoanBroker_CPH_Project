@@ -1,4 +1,6 @@
-﻿using RabbitMQ.Client;
+﻿using MessageGateway;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
@@ -49,6 +51,7 @@ namespace RecipientList
 
         public void StartReceiving()
         {
+            LoanRequest loanRequest;
             var consumer = new EventingBasicConsumer(channel);
             channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
@@ -58,35 +61,23 @@ namespace RecipientList
             {
                 var body = ea.Body;
                 var header = ea.BasicProperties;
-                //Serialize message
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(" [x] Received {0}", message);
+                //Deserialize message
+                loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
+                Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
-                string[] values = message.Split('#');
-                List<string> banks = new List<string>();
-                for (int i = 4; i < values.Length; i++)
-                {
-                    banks.Add(values[i]);
-                }
+                //Get the banks to send loan request to
+                List<Bank> banks = loanRequest.Banks;
 
-                string[] bankMessage = new string[3];
-                bankMessage[0] = values[0];
-                bankMessage[1] = values[1];
-                bankMessage[2] = values[2];
-                bankMessage[3] = values[3];
-                //Enrich the message, add the credit score string from GetCreditScore to message string
-
-                message = string.Join("#", bankMessage);
-                //Send()  send the message to the bank enricher channel
-                SendScatterMsg(message, banks);
+                //Send()  send the message to the translator for the banks who want the request
+                SendScatterMsg(loanRequest.ToString(), banks);
                 //release the message from the queue, allowing us to take in the next message
                 channel.BasicAck(ea.DeliveryTag, false);
             };
         }
 
-        private void SendScatterMsg(string message, List<string> Banks)
+        private void SendScatterMsg(string message, List<Bank> Banks)
         {
-            List<string> responses = new List<string>();
+            //List<string> responses = new List<string>();
             string responseQueue = "bankQueue.reply";
             string correlationId = Guid.NewGuid().ToString();
 
@@ -98,32 +89,34 @@ namespace RecipientList
 
             if (Banks.Count > 0)
             {
-                foreach (string bank in Banks)
+                foreach (Bank bank in Banks)
                 {
-                    if (bank == "BankA")
-                    {
-                        channel.BasicPublish("", "translatorQueue.a", basicProperties, messageBytes);
-                        Console.WriteLine("message: {0}, send to translatorQueue.a channel", message);
-                    }
-                    else if (bank == "BankB")
-                    {
-                        channel.BasicPublish("", "translatorQueue.b", basicProperties, messageBytes);
-                        Console.WriteLine("message: {0}, send to translatorQueue.b channel", message);
-                    }
-                    else if (bank == "BankC")
-                    {
-                        channel.BasicPublish("", "translatorQueue.c", basicProperties, messageBytes);
-                        Console.WriteLine("message: {0}, send to translatorQueue.c channel", message);
-                    }
-                    else if (bank == "BankD")
-                    {
-                        channel.BasicPublish("", "translatorQueue.d", basicProperties, messageBytes);
-                        Console.WriteLine("message: {0}, send to translatorQueue.d channel", message);
-                    }
-                    else
-                    {
-                        Console.WriteLine("the bank do not have a Queue!!");
-                    }
+                    channel.BasicPublish("", bank.RoutingKey, basicProperties, messageBytes);
+                    Console.WriteLine("message: {0}, send to: {1} channel", message, bank.RoutingKey);
+                    //if (bank == "BankA")
+                    //{
+                    //    channel.BasicPublish("", "translatorQueue.a", basicProperties, messageBytes);
+                    //    Console.WriteLine("message: {0}, send to translatorQueue.a channel", message);
+                    //}
+                    //else if (bank == "BankB")
+                    //{
+                    //    channel.BasicPublish("", "translatorQueue.b", basicProperties, messageBytes);
+                    //    Console.WriteLine("message: {0}, send to translatorQueue.b channel", message);
+                    //}
+                    //else if (bank == "BankC")
+                    //{
+                    //    channel.BasicPublish("", "translatorQueue.c", basicProperties, messageBytes);
+                    //    Console.WriteLine("message: {0}, send to translatorQueue.c channel", message);
+                    //}
+                    //else if (bank == "BankD")
+                    //{
+                    //    channel.BasicPublish("", "translatorQueue.d", basicProperties, messageBytes);
+                    //    Console.WriteLine("message: {0}, send to translatorQueue.d channel", message);
+                    //}
+                    //else
+                    //{
+                    //    Console.WriteLine("the bank do not have a Queue!!");
+                    //}
                 }
             }
             else

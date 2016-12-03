@@ -1,4 +1,5 @@
-﻿using JSON_Library;
+﻿using MessageGateway;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -15,11 +16,17 @@ namespace TranslatorJsonBank
         private const string UserName = "guest";
         private const string Password = "guest";
         private string receiveQueueName;
-        private string sendToQueueName;
+        //private string sendToQueueName;
 
         private ConnectionFactory connectionFactory;
         private IConnection connection;
         private IModel channel;
+
+        public translator(string receiveQueueName)
+        {
+            this.receiveQueueName = receiveQueueName;
+            SetupRabbitMq();
+        }
 
         private void SetupRabbitMq()
         {
@@ -41,6 +48,7 @@ namespace TranslatorJsonBank
 
         public void StartReceiving()
         {
+            LoanRequest loanRequest;
             var consumer = new EventingBasicConsumer(channel);
             channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
@@ -50,15 +58,19 @@ namespace TranslatorJsonBank
             {
                 var body = ea.Body;
                 var header = ea.BasicProperties;
-                //Serialize message
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(" [x] Received {0}", message);
+                //Deserialize message
+                loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
 
-                List<string> values = message.Split('#').ToList();
-                string ssn = values[0];
-                string amount = values[1];
-                string duration = values[2];
-                string creditScore = values[3];
+                Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
+
+                //the backslashes is used to say that the quotes is a part of the string
+                string message = "{ \"ssn\":" + loanRequest.SNN
+
+                 + ",\"creditScore\":" + loanRequest.CreditScore.ToString()
+
+                 + ",\"loanAmount\":" + loanRequest.Amount.ToString()
+
+                 + ",\"loanDuration\":" + loanRequest.Duration + " }";
 
                 //Send()  send the message to the bank enricher channel
                 Send(message, header);
@@ -76,9 +88,10 @@ namespace TranslatorJsonBank
             //Serialize
             byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
 
+            channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
             //Send message
-            channel.BasicPublish("", sendToQueueName, properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} channel", message, sendToQueueName);
+            channel.BasicPublish("cphbusiness.bankJSON", "", properties, messageBuffer);
+            Console.WriteLine("message: {0}, send to Json bank", message);
         }
     }
 }

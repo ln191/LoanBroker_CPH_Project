@@ -10,6 +10,7 @@ namespace GetBanks
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Bank Enricher";
             BankEnricher bankenricher = new BankEnricher("bankEnricher", "recipientlister");
             Console.WriteLine("Getting banks...");
             Console.WriteLine("");

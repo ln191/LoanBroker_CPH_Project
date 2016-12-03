@@ -1,4 +1,6 @@
-﻿using RabbitMQ.Client;
+﻿using MessageGateway;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
@@ -47,6 +49,7 @@ namespace GetBanks
 
         public void StartReceiving()
         {
+            LoanRequest loanRequest;
             var consumer = new EventingBasicConsumer(channel);
             channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
@@ -57,25 +60,22 @@ namespace GetBanks
                 var body = ea.Body;
                 var header = ea.BasicProperties;
                 //Serialize message
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(" [x] Received {0}", message);
 
-                string[] values = message.Split('#');
-                string ssn = values[0];
-                string amount = values[1];
-                string duration = values[2];
-                string creditScore = values[3];
-                //Enrich the message, add the credit score string from GetCreditScore to message string
-                string[] enrich = new string[] { message, GetBank(ssn, amount, duration, creditScore) };
-                message = string.Join("#", enrich);
+                loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
+
+                Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
+
+                //Enrich the message, add the list of banks that like to have this loanRequst
+                loanRequest.Banks = GetBank(loanRequest.SNN, loanRequest.Amount, loanRequest.Duration, loanRequest.CreditScore);
+
                 //Send()  send the message to the bank enricher channel
-                Send(message, header);
+                Send(loanRequest.ToString(), header);
                 //release the message from the queue, allowing us to take in the next message
                 channel.BasicAck(ea.DeliveryTag, false);
             };
         }
 
-        private string GetBank(string ssn, string amount, string duration, string creditScore)
+        private List<Bank> GetBank(string ssn, double amount, int duration, int creditScore)
         {
             return "Dansk Bank";
         }

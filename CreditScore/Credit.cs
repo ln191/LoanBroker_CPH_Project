@@ -1,4 +1,6 @@
-﻿using RabbitMQ.Client;
+﻿using MessageGateway;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
@@ -58,6 +60,7 @@ namespace CreditScore
 
         public void StartReceiving()
         {
+            LoanRequest loanRequest;
             var consumer = new EventingBasicConsumer(channel);
             channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
@@ -67,17 +70,20 @@ namespace CreditScore
             {
                 var body = ea.Body;
                 var header = ea.BasicProperties;
-                //Serialize message
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(" [x] Received {0}", message);
 
-                string[] values = message.Split('#');
-                string ssn = values[0];
-                //Enrich the message, add the credit score string from GetCreditScore to message string
-                string[] enrich = new string[] { message, GetCreditScore(ssn) };
-                message = string.Join("#", enrich);
+                //Deserialize message
+                loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
+
+                Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
+
+                string ssn = loanRequest.SNN;
+
+                //Enrich the message, add the credit score string from GetCreditScore to loanRequest
+
+                loanRequest.CreditScore = GetCreditScore(ssn);
+
                 //Send()  send the message to the bank enricher channel
-                Send(message, header);
+                Send(loanRequest.ToString(), header);
 
                 #region BasicAck facts notes
 
@@ -102,12 +108,12 @@ namespace CreditScore
             };
         }
 
-        private string GetCreditScore(string ssn)
+        private int GetCreditScore(string ssn)
         {
             //send a soap message with the ssn to the creditscore webservice and wait for reply
             //return a credit score string
 
-            return "test";
+            return 2;
         }
 
         private void Send(string message, IBasicProperties header)

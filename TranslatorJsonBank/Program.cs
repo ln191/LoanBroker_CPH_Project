@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace TranslatorJsonBank
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            Console.Title = "JsonBank Translator";
+            translator translator = new translator("translatorQueue.a");
+            Console.WriteLine("Translator is running...");
+            translator.StartReceiving();
+            Console.ReadLine();
         }
     }
 }

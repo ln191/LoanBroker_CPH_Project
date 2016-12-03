@@ -11,11 +11,13 @@ namespace TestClint
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Test Client";
             string ssn = "";
             string amount = "";
             string duration = "";
             string[] message = new string[3];
             bool correctInfo = false;
+            LoanRequest loanRequest = new LoanRequest();
 
             while (!correctInfo)
             {
@@ -33,10 +35,12 @@ namespace TestClint
                     correctInfo = true;
                 }
             }
-            message[0] = ssn;
-            message[1] = amount;
-            message[2] = duration;
-            string msg = Translator.CreateStringMessage(message);
+            loanRequest.SNN = ssn;
+            loanRequest.Amount = Convert.ToDouble(amount);
+            loanRequest.Duration = Convert.ToInt32(duration);
+
+            string msg = loanRequest.ToString();
+
             RabbitSender sender = new RabbitSender("loanRequest");
             sender.Send(msg);
             Console.WriteLine("our request has now been send, {0} ", msg);

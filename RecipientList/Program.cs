@@ -10,6 +10,11 @@ namespace RecipientList
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Recipient list";
+            Scatter scatter = new Scatter("recipientlister");
+            Console.WriteLine("Recipient list is running..");
+            scatter.StartReceiving();
+            Console.ReadLine();
         }
     }
 }

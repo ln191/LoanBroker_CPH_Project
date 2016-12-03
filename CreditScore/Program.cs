@@ -12,6 +12,7 @@ namespace CreditScore
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Credit Score Enricher";
             CreditEnricher creditEnricher = new CreditEnricher("loanRequest", "bankEnricher");
             Console.WriteLine("Running Credit score enricher...");
             Console.WriteLine("");
