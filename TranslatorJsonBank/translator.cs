@@ -12,45 +12,49 @@ namespace TranslatorJsonBank
 {
     public class translator
     {
-        private const string HostName = "localhost";
-        private const string UserName = "guest";
-        private const string Password = "guest";
+        //private const string HostName = "localhost";
+        //private const string UserName = "guest";
+        //private const string Password = "guest";
         private string receiveQueueName;
+
         //private string sendToQueueName;
 
-        private ConnectionFactory connectionFactory;
-        private IConnection connection;
-        private IModel channel;
+        //private ConnectionFactory connectionFactory;
+        //private IConnection connection;
+        //private IModel rabbitConn.Channel;
+        private RabbitConnection rabbitConn;
 
         public translator(string receiveQueueName)
         {
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
-            SetupRabbitMq();
+            //SetupRabbitMq();
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
-        private void SetupRabbitMq()
-        {
-            connectionFactory = new ConnectionFactory
-            {
-                HostName = HostName,
-                UserName = UserName,
-                Password = Password
-            };
+        //private void SetupRabbitMq()
+        //{
+        //    connectionFactory = new ConnectionFactory
+        //    {
+        //        HostName = HostName,
+        //        UserName = UserName,
+        //        Password = Password
+        //    };
 
-            connection = connectionFactory.CreateConnection();
-            channel = connection.CreateModel();
-            channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            //so it will take one message at the time
-            //so it will take one message at the time
-            channel.BasicQos(0, 1, false);
-        }
+        //    connection = connectionFactory.CreateConnection();
+        //    rabbitConn.Channel = connection.CreateModel();
+        //    rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        //    rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        //    //so it will take one message at the time
+        //    //so it will take one message at the time
+        //    rabbitConn.Channel.BasicQos(0, 1, false);
+        //}
 
         public void StartReceiving()
         {
             LoanRequest loanRequest;
-            var consumer = new EventingBasicConsumer(channel);
-            channel.BasicConsume(queue: receiveQueueName,
+            var consumer = new EventingBasicConsumer(rabbitConn.Channel);
+            rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
             //get next message, if any
@@ -70,28 +74,29 @@ namespace TranslatorJsonBank
 
                  + ",\"loanAmount\":" + loanRequest.Amount.ToString()
 
-                 + ",\"loanDuration\":" + loanRequest.Duration + " }";
+                 + ",\"loanDuration\":" + loanRequest.Duration.ToString() + " }";
 
-                //Send()  send the message to the bank enricher channel
-                Send(message, header);
+                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
+                //Send()  send the message to the bank enricher Channel
+                rabbitConn.Send(message, header, false, "cphbusiness.bankJSON");
                 //release the message from the queue, allowing us to take in the next message
-                channel.BasicAck(ea.DeliveryTag, false);
+                rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
         }
 
-        private void Send(string message, IBasicProperties header)
-        {
-            //setup header properties
-            var properties = header;
-            properties.Persistent = true;
+        //private void Send(string message, IBasicProperties header)
+        //{
+        //    //setup header properties
+        //    var properties = header;
+        //    properties.Persistent = true;
 
-            //Serialize
-            byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
+        //    //Serialize
+        //    byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
 
-            channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
-            //Send message
-            channel.BasicPublish("cphbusiness.bankJSON", "", properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to Json bank", message);
-        }
+        //    rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
+        //    //Send message
+        //    rabbitConn.Channel.BasicPublish("cphbusiness.bankJSON", "", properties, messageBuffer);
+        //    Console.WriteLine("message: {0}, send to Json bank", message);
+        //}
     }
 }

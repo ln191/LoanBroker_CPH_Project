@@ -18,7 +18,7 @@ namespace TestClint
             string[] message = new string[3];
             bool correctInfo = false;
             LoanRequest loanRequest = new LoanRequest();
-
+            RabbitConnection rabbitConn = new RabbitConnection();
             while (!correctInfo)
             {
                 Console.WriteLine("Welcome, to receive loan offers, you need to supply us with the following information.");
@@ -40,9 +40,9 @@ namespace TestClint
             loanRequest.Duration = Convert.ToInt32(duration);
 
             string msg = loanRequest.ToString();
-
-            RabbitSender sender = new RabbitSender("loanRequest");
-            sender.Send(msg);
+            rabbitConn.Send(msg, "loanRequest", false);
+            //RabbitSender sender = new RabbitSender("loanRequest");
+            //sender.Send(msg);
             Console.WriteLine("our request has now been send, {0} ", msg);
             Console.Read();
         }
