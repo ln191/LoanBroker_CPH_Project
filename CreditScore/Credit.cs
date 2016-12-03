@@ -113,7 +113,7 @@ namespace CreditScore
             //send a soap message with the ssn to the creditscore webservice and wait for reply
             //return a credit score string
 
-            return 2;
+            return 20;
         }
 
         private void Send(string message, IBasicProperties header)
