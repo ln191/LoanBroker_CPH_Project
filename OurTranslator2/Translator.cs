@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageGateway
+namespace OurTranslator2
 {
-    class Program
+    class Translator
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }
