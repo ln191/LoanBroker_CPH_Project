@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GetBanks.BankService;
 
 namespace GetBanks
 {
@@ -15,6 +16,9 @@ namespace GetBanks
         private const string Password = "guest";
         private string receiveQueueName;
         private string sendToQueueName;
+
+        //initialize the WebService class
+        BankCaller BankCaller = new BankCaller();
 
         private ConnectionFactory connectionFactory;
         private IConnection connection;
@@ -77,7 +81,10 @@ namespace GetBanks
 
         private string GetBank(string ssn, string amount, string duration, string creditScore)
         {
-            return "Dansk Bank";
+            //makes a soap Request that returns a string array and converts it to a string
+            ArrayOfString BankQueuesArray = BankCaller.Call(int.Parse(amount), int.Parse(creditScore));
+            String BankQueuesString = string.Join("#", BankQueuesArray);
+            return BankQueuesString;
         }
 
         private void Send(string message, IBasicProperties header)
