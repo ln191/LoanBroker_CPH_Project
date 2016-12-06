@@ -19,6 +19,8 @@ namespace GetBanks
 
         private string sendToQueueName;
 
+        private BankCaller bankCaller = new BankCaller();
+
         //private ConnectionFactory connectionFactory;
         //private IConnection connection;
         //private IModel channel;
@@ -84,9 +86,15 @@ namespace GetBanks
         private List<Bank> GetBank(string ssn, double amount, int duration, int creditScore)
         {
             List<Bank> tempBanks = new List<Bank>();
-            Bank danskeBank = new Bank("Danske Bank", "translatorQueue.a");
+            //Bank danskeBank = new Bank("Danske Bank", "translatorQueue.a");
             //Bank jyskeBank = new Bank("Jyske Bank", "translatorQueue.b");
-            tempBanks.Add(danskeBank);
+            //tempBanks.Add(danskeBank);
+
+            foreach(string s in bankCaller.Call(amount, duration, creditScore))
+            {
+                tempBanks.Add(new Bank(s, s));
+            }
+
             return tempBanks;
         }
 

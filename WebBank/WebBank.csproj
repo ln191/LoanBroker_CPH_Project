@@ -9,12 +9,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CD636253-DB7D-45C2-9A6A-08A192032CF6}</ProjectGuid>
+    <ProjectGuid>{974F30E2-289F-4615-9D36-DB9EDCC3A48E}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RulebaseService</RootNamespace>
-    <AssemblyName>RulebaseService</AssemblyName>
+    <RootNamespace>WebBank</RootNamespace>
+    <AssemblyName>WebBank</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -106,13 +106,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RuleBaseService.asmx" />
     <Content Include="Web.config" />
+    <Content Include="WebBank.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleBaseService.asmx.cs">
-      <DependentUpon>RuleBaseService.asmx</DependentUpon>
+    <Compile Include="WebBank.asmx.cs">
+      <DependentUpon>WebBank.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
@@ -129,9 +129,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>55093</DevelopmentServerPort>
+          <DevelopmentServerPort>53845</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:55093/</IISUrl>
+          <IISUrl>http://localhost:53845/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

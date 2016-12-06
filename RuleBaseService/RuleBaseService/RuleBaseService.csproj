@@ -106,13 +106,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RuleBase.asmx" />
+    <Content Include="RuleBaseService.asmx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleBase.asmx.cs">
-      <DependentUpon>RuleBase.asmx</DependentUpon>
+    <Compile Include="RuleBaseService.asmx.cs">
+      <DependentUpon>RuleBaseService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

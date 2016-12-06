@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GetBanks.BankService;
+using GetBanks.RuleBaseService;
+
 
 namespace GetBanks
 {
     class BankCaller
     {
-        RuleBaseSoapClient proxy = null;
+        RuleBaseServiceSoapClient proxy = null;
         ArrayOfString BankQueues;
 
-        public ArrayOfString Call(int amount, int creditScore)
+        public ArrayOfString Call(double amount, int duration, int creditScore)
         {
             //initializes and envokes the methode of the webservice
-            proxy = new RuleBaseSoapClient();
-            BankQueues = proxy.GetBankQueues(amount, creditScore);
+            proxy = new RuleBaseServiceSoapClient();
+            BankQueues = proxy.GetBankQueues(amount, duration, creditScore);
             return BankQueues;
         }
     }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GetBanks.BankService {
+namespace GetBanks.RuleBaseService {
     using System.Runtime.Serialization;
     using System;
     
@@ -21,15 +21,15 @@ namespace GetBanks.BankService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="BankService.RuleBaseSoap")]
-    public interface RuleBaseSoap {
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="RuleBaseService.RuleBaseServiceSoap")]
+    public interface RuleBaseServiceSoap {
         
         // CODEGEN: Generating message contract since element name GetBankQueuesResult from namespace http://tempuri.org/ is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/GetBankQueues", ReplyAction="*")]
-        GetBanks.BankService.GetBankQueuesResponse GetBankQueues(GetBanks.BankService.GetBankQueuesRequest request);
+        GetBanks.RuleBaseService.GetBankQueuesResponse GetBankQueues(GetBanks.RuleBaseService.GetBankQueuesRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/GetBankQueues", ReplyAction="*")]
-        System.Threading.Tasks.Task<GetBanks.BankService.GetBankQueuesResponse> GetBankQueuesAsync(GetBanks.BankService.GetBankQueuesRequest request);
+        System.Threading.Tasks.Task<GetBanks.RuleBaseService.GetBankQueuesResponse> GetBankQueuesAsync(GetBanks.RuleBaseService.GetBankQueuesRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -39,12 +39,12 @@ namespace GetBanks.BankService {
     public partial class GetBankQueuesRequest {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="GetBankQueues", Namespace="http://tempuri.org/", Order=0)]
-        public GetBanks.BankService.GetBankQueuesRequestBody Body;
+        public GetBanks.RuleBaseService.GetBankQueuesRequestBody Body;
         
         public GetBankQueuesRequest() {
         }
         
-        public GetBankQueuesRequest(GetBanks.BankService.GetBankQueuesRequestBody Body) {
+        public GetBankQueuesRequest(GetBanks.RuleBaseService.GetBankQueuesRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -56,16 +56,20 @@ namespace GetBanks.BankService {
     public partial class GetBankQueuesRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(Order=0)]
-        public int Amount;
+        public double Amount;
         
         [System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+        public int Duration;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
         public int CreditScore;
         
         public GetBankQueuesRequestBody() {
         }
         
-        public GetBankQueuesRequestBody(int Amount, int CreditScore) {
+        public GetBankQueuesRequestBody(double Amount, int Duration, int CreditScore) {
             this.Amount = Amount;
+            this.Duration = Duration;
             this.CreditScore = CreditScore;
         }
     }
@@ -77,12 +81,12 @@ namespace GetBanks.BankService {
     public partial class GetBankQueuesResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Name="GetBankQueuesResponse", Namespace="http://tempuri.org/", Order=0)]
-        public GetBanks.BankService.GetBankQueuesResponseBody Body;
+        public GetBanks.RuleBaseService.GetBankQueuesResponseBody Body;
         
         public GetBankQueuesResponse() {
         }
         
-        public GetBankQueuesResponse(GetBanks.BankService.GetBankQueuesResponseBody Body) {
+        public GetBankQueuesResponse(GetBanks.RuleBaseService.GetBankQueuesResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -94,68 +98,70 @@ namespace GetBanks.BankService {
     public partial class GetBankQueuesResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public GetBanks.BankService.ArrayOfString GetBankQueuesResult;
+        public GetBanks.RuleBaseService.ArrayOfString GetBankQueuesResult;
         
         public GetBankQueuesResponseBody() {
         }
         
-        public GetBankQueuesResponseBody(GetBanks.BankService.ArrayOfString GetBankQueuesResult) {
+        public GetBankQueuesResponseBody(GetBanks.RuleBaseService.ArrayOfString GetBankQueuesResult) {
             this.GetBankQueuesResult = GetBankQueuesResult;
         }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface RuleBaseSoapChannel : GetBanks.BankService.RuleBaseSoap, System.ServiceModel.IClientChannel {
+    public interface RuleBaseServiceSoapChannel : GetBanks.RuleBaseService.RuleBaseServiceSoap, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class RuleBaseSoapClient : System.ServiceModel.ClientBase<GetBanks.BankService.RuleBaseSoap>, GetBanks.BankService.RuleBaseSoap {
+    public partial class RuleBaseServiceSoapClient : System.ServiceModel.ClientBase<GetBanks.RuleBaseService.RuleBaseServiceSoap>, GetBanks.RuleBaseService.RuleBaseServiceSoap {
         
-        public RuleBaseSoapClient() {
+        public RuleBaseServiceSoapClient() {
         }
         
-        public RuleBaseSoapClient(string endpointConfigurationName) : 
+        public RuleBaseServiceSoapClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public RuleBaseSoapClient(string endpointConfigurationName, string remoteAddress) : 
+        public RuleBaseServiceSoapClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public RuleBaseSoapClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public RuleBaseServiceSoapClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public RuleBaseSoapClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public RuleBaseServiceSoapClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        GetBanks.BankService.GetBankQueuesResponse GetBanks.BankService.RuleBaseSoap.GetBankQueues(GetBanks.BankService.GetBankQueuesRequest request) {
+        GetBanks.RuleBaseService.GetBankQueuesResponse GetBanks.RuleBaseService.RuleBaseServiceSoap.GetBankQueues(GetBanks.RuleBaseService.GetBankQueuesRequest request) {
             return base.Channel.GetBankQueues(request);
         }
         
-        public GetBanks.BankService.ArrayOfString GetBankQueues(int Amount, int CreditScore) {
-            GetBanks.BankService.GetBankQueuesRequest inValue = new GetBanks.BankService.GetBankQueuesRequest();
-            inValue.Body = new GetBanks.BankService.GetBankQueuesRequestBody();
+        public GetBanks.RuleBaseService.ArrayOfString GetBankQueues(double Amount, int Duration, int CreditScore) {
+            GetBanks.RuleBaseService.GetBankQueuesRequest inValue = new GetBanks.RuleBaseService.GetBankQueuesRequest();
+            inValue.Body = new GetBanks.RuleBaseService.GetBankQueuesRequestBody();
             inValue.Body.Amount = Amount;
+            inValue.Body.Duration = Duration;
             inValue.Body.CreditScore = CreditScore;
-            GetBanks.BankService.GetBankQueuesResponse retVal = ((GetBanks.BankService.RuleBaseSoap)(this)).GetBankQueues(inValue);
+            GetBanks.RuleBaseService.GetBankQueuesResponse retVal = ((GetBanks.RuleBaseService.RuleBaseServiceSoap)(this)).GetBankQueues(inValue);
             return retVal.Body.GetBankQueuesResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<GetBanks.BankService.GetBankQueuesResponse> GetBanks.BankService.RuleBaseSoap.GetBankQueuesAsync(GetBanks.BankService.GetBankQueuesRequest request) {
+        System.Threading.Tasks.Task<GetBanks.RuleBaseService.GetBankQueuesResponse> GetBanks.RuleBaseService.RuleBaseServiceSoap.GetBankQueuesAsync(GetBanks.RuleBaseService.GetBankQueuesRequest request) {
             return base.Channel.GetBankQueuesAsync(request);
         }
         
-        public System.Threading.Tasks.Task<GetBanks.BankService.GetBankQueuesResponse> GetBankQueuesAsync(int Amount, int CreditScore) {
-            GetBanks.BankService.GetBankQueuesRequest inValue = new GetBanks.BankService.GetBankQueuesRequest();
-            inValue.Body = new GetBanks.BankService.GetBankQueuesRequestBody();
+        public System.Threading.Tasks.Task<GetBanks.RuleBaseService.GetBankQueuesResponse> GetBankQueuesAsync(double Amount, int Duration, int CreditScore) {
+            GetBanks.RuleBaseService.GetBankQueuesRequest inValue = new GetBanks.RuleBaseService.GetBankQueuesRequest();
+            inValue.Body = new GetBanks.RuleBaseService.GetBankQueuesRequestBody();
             inValue.Body.Amount = Amount;
+            inValue.Body.Duration = Duration;
             inValue.Body.CreditScore = CreditScore;
-            return ((GetBanks.BankService.RuleBaseSoap)(this)).GetBankQueuesAsync(inValue);
+            return ((GetBanks.RuleBaseService.RuleBaseServiceSoap)(this)).GetBankQueuesAsync(inValue);
         }
     }
 }

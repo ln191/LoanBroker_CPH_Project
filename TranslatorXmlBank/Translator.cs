@@ -40,9 +40,19 @@ namespace TranslatorXmlBank
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
                 //handles the set condition "The loan duration will be calculated from 1/1 1970. Therefore loan duration of 3 years must look as the above example."
-                DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
+
+                DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0);
+                try
+                {
+                    dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
+                }
+                catch(Exception EX)
+                {
+                    Console.WriteLine(EX);
+                }
 
                 //setting up the message to the banks XML format
+              
                 string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3}</loanDuration></LoanRequest>",
 
                  loanRequest.SNN,

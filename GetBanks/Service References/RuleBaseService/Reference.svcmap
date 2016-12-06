@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="014e3f4e-4267-47c5-ba31-9d6f1bf07e4c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="d97b4f2e-aeaa-446e-a987-27b3f96117d1" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,11 +19,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:59361/RuleBase.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:55093/RuleBaseService.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="RuleBase.disco" MetadataType="Disco" ID="5b160b9d-13be-4cdd-a641-0d8b6090b319" SourceId="1" SourceUrl="http://localhost:59361/RuleBase.asmx?disco" />
-    <MetadataFile FileName="RuleBase.wsdl" MetadataType="Wsdl" ID="cece2dd3-fe39-48f8-8fd2-e97479b5cb88" SourceId="1" SourceUrl="http://localhost:59361/RuleBase.asmx?wsdl" />
+    <MetadataFile FileName="RuleBaseService.disco" MetadataType="Disco" ID="3e01fa56-bad8-46f3-8c18-a344978f48f9" SourceId="1" SourceUrl="http://localhost:55093/RuleBaseService.asmx?disco" />
+    <MetadataFile FileName="RuleBaseService.wsdl" MetadataType="Wsdl" ID="28d89221-7b73-4c1f-bc6b-0d123a126ad0" SourceId="1" SourceUrl="http://localhost:55093/RuleBaseService.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
