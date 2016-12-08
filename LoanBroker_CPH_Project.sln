@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OurTranslator2", "OurTransl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBank", "WebBank\WebBank.csproj", "{974F30E2-289F-4615-9D36-DB9EDCC3A48E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBank", "MessageBank\MessageBank.csproj", "{23757DF7-1CBD-4B8A-BC58-4F1EA259F68A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23757DF7-1CBD-4B8A-BC58-4F1EA259F68A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23757DF7-1CBD-4B8A-BC58-4F1EA259F68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23757DF7-1CBD-4B8A-BC58-4F1EA259F68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23757DF7-1CBD-4B8A-BC58-4F1EA259F68A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

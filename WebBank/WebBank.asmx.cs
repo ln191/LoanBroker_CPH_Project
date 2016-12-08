@@ -18,7 +18,7 @@ namespace WebBank
     {
 
         [WebMethod]
-        public string GetOffer(String ssn, int duration, int creditScore)
+        public string GetOffer(string ssn, int duration, int creditScore)
         {
             Double intrestRate = (900.00 - creditScore) / 100.00;
             if(duration >= 12)

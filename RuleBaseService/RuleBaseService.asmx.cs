@@ -18,7 +18,7 @@ namespace RulebaseService
     {
 
         [WebMethod]
-        public List<string> GetBankQueues(Double Amount, int Duration, int CreditScore)
+        public List<string> GetBankQueues(double Amount, int Duration, int CreditScore)
         {
             List<string> queues = new List<string>();
             queues.Add("translatorQueue.a");
