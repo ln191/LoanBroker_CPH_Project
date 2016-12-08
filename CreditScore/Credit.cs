@@ -16,6 +16,11 @@ namespace CreditScore
 
         private string sendToQueueName;
 
+        private CreditScoreCaller creditScoreCaller = new CreditScoreCaller();
+
+        //private ConnectionFactory connectionFactory;
+        //private IConnection connection;
+        //private IModel channel;
         private RabbitConnection rabbitConn;
 
         public CreditEnricher(string receiveQueueName, string sendToQueueName)
@@ -82,7 +87,7 @@ namespace CreditScore
             //send a soap message with the ssn to the creditscore webservice and wait for reply
             //return a credit score string
 
-            return 20;
+            return creditScoreCaller.Call(ssn);
         }
     }
 }

@@ -8,12 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TranslatorXmlBank
+namespace OurTranslator1
 {
-    public class Translator
+    class Translator
     {
         private string receiveQueueName;
         private RabbitConnection rabbitConn;
+
+        private WebBankCaller WBC = new WebBankCaller();
 
         public Translator(string receiveQueueName)
         {
@@ -40,35 +42,10 @@ namespace TranslatorXmlBank
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
                 //handles the set condition "The loan duration will be calculated from 1/1 1970. Therefore loan duration of 3 years must look as the above example."
+                //DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
 
-                DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0);
-                try
-                {
-                    dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
-                }
-                catch(Exception EX)
-                {
-                    Console.WriteLine(EX);
-                }
+                Console.WriteLine(WBC.Call(loanRequest.SNN, loanRequest.Duration, loanRequest.CreditScore));
 
-                //setting up the message to the banks XML format
-              
-                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3}</loanDuration></LoanRequest>",
-
-                 loanRequest.SNN,
-
-                 loanRequest.CreditScore.ToString(),
-
-                 loanRequest.Amount.ToString(),
-
-                 dateDuration.ToString()
-
-                 );
-
-                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankXML", "fanout");
-                //Send()  send the message to the bank enricher Channel
-                rabbitConn.Send(message, header, false, "cphbusiness.bankXML");
-                //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
         }
