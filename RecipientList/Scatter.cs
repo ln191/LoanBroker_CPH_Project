@@ -12,14 +12,8 @@ namespace RecipientList
 {
     public class Scatter
     {
-        //private const string HostName = "localhost";
-        //private const string UserName = "guest";
-        //private const string Password = "guest";
         private string receiveQueueName;
 
-        //private ConnectionFactory connectionFactory;
-        //private IConnection connection;
-        //private IModel rabbitConn.Channel;
         private RabbitConnection rabbitConn;
 
         public Scatter(string receiveQueueName)
@@ -31,30 +25,7 @@ namespace RecipientList
             rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.c", durable: false, exclusive: false, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.d", durable: false, exclusive: false, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: "bankQueue.reply", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            //SetupRabbitMq();
         }
-
-        //private void SetupRabbitMq()
-        //{
-        //    connectionFactory = new ConnectionFactory
-        //    {
-        //        HostName = HostName,
-        //        UserName = UserName,
-        //        Password = Password
-        //    };
-
-        //    connection = connectionFactory.CreateConnection();
-        //    rabbitConn.Channel = connection.CreateModel();
-
-        //    rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.a", durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.b", durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.c", durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.d", durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    rabbitConn.Channel.QueueDeclare(queue: "bankQueue.reply", durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    //so it will take one message at the time
-        //    //so it will take one message at the time
-        //    rabbitConn.Channel.BasicQos(0, 1, false);
-        //}
 
         public void StartReceiving()
         {
@@ -84,7 +55,6 @@ namespace RecipientList
 
         private void SendScatterMsg(string message, List<Bank> Banks)
         {
-            //List<string> responses = new List<string>();
             string responseQueue = "bankQueue.reply";
             string correlationId = Guid.NewGuid().ToString();
 

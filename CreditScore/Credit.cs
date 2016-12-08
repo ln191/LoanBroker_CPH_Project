@@ -12,9 +12,6 @@ namespace CreditScore
 {
     public class CreditEnricher
     {
-        //private const string HostName = "localhost";
-        //private const string UserName = "guest";
-        //private const string Password = "guest";
         private string receiveQueueName;
 
         private string sendToQueueName;
@@ -33,37 +30,7 @@ namespace CreditScore
             this.sendToQueueName = sendToQueueName;
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            //SetupRabbitMq();
         }
-
-        //private void SetupRabbitMq()
-        //{
-        //    connectionFactory = new ConnectionFactory
-        //    {
-        //        HostName = HostName,
-        //        UserName = UserName,
-        //        Password = Password
-        //    };
-
-        //    connection = connectionFactory.CreateConnection();
-        //    channel = connection.CreateModel();
-        //    channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-        //    channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-        //    #region basicQos Notes
-
-        //    /*
-        //     *  basicQos method with the prefetchCount = 1 setting.
-        //     *  This tells RabbitMQ not to give more than one message to a worker at a time.
-        //     *  Or, in other words, don't dispatch a new message to a worker until it has processed and acknowledged the previous one.
-        //     *  Instead, it will dispatch it to the next worker that is not still busy.
-        //     */
-
-        //    #endregion basicQos Notes
-
-        //    //so this program will take one message at the time
-        //    channel.BasicQos(0, 1, false);
-        //}
 
         public void StartReceiving()
         {
@@ -122,19 +89,5 @@ namespace CreditScore
 
             return creditScoreCaller.Call(ssn);
         }
-
-        //private void Send(string message, IBasicProperties header)
-        //{
-        //    //setup header properties
-        //    var properties = header;
-        //    properties.Persistent = true;
-
-        //    //Serialize
-        //    byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
-
-        //    //Send message
-        //    channel.BasicPublish("", sendToQueueName, properties, messageBuffer);
-        //    Console.WriteLine("message: {0}, send to {1} channel", message, sendToQueueName);
-        //}
     }
 }
