@@ -22,6 +22,7 @@ namespace OurTranslator2
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -60,10 +61,10 @@ namespace OurTranslator2
                 messageList.Add(loanRequest.Amount.ToString());
                 messageList.Add(dateDuration.ToString());
 
-                String message = string.Format("#", messageList);
+                String message = string.Join("#", messageList);
 
                 //Send()  send the message to the bank enricher Channel
-                rabbitConn.Send(message, header, false, sendToQueueName);
+                rabbitConn.Send(message, sendToQueueName, header, false);
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
