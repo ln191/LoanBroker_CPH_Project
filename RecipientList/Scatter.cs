@@ -18,13 +18,16 @@ namespace RecipientList
 
         public Scatter(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.a", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.b", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.c", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: "translatorQueue.d", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: "bankQueue.reply", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.web.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -34,6 +37,7 @@ namespace RecipientList
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
+
             //get next message, if any
             consumer.Received += (model, ea) =>
             {
@@ -46,8 +50,10 @@ namespace RecipientList
                 //Get the banks to send loan request to
                 List<Bank> banks = loanRequest.Banks;
 
+                //rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", basicProperties, false);
                 //Send()  send the message to the translator for the banks who want the request
                 SendScatterMsg(loanRequest.ToString(), banks);
+
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
@@ -55,19 +61,22 @@ namespace RecipientList
 
         private void SendScatterMsg(string message, List<Bank> Banks)
         {
-            string responseQueue = "bankQueue.reply";
+            string responseQueue;
             string correlationId = Guid.NewGuid().ToString();
-
             IBasicProperties basicProperties = rabbitConn.Channel.CreateBasicProperties();
-            basicProperties.ReplyTo = responseQueue;
+
             basicProperties.CorrelationId = correlationId;
-
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-
+            rabbitConn.Channel.BasicPublish("", "groupB.aggregator.info", basicProperties, messageBytes);
             if (Banks.Count > 0)
             {
+                //rabbitConn.Channel.BasicPublish("", "groupB.aggregator.info", header, messageBytes);
                 foreach (Bank bank in Banks)
                 {
+                    string[] values = bank.RoutingKey.Split('.');
+                    values[3] = "reply";
+                    responseQueue = string.Join(".", values);
+                    basicProperties.ReplyTo = responseQueue;
                     rabbitConn.Channel.BasicPublish("", bank.RoutingKey, basicProperties, messageBytes);
                     Console.WriteLine("message: {0}, send to: {1} Channel", message, bank.RoutingKey);
                 }

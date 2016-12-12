@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace OurTranslator1
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Console.Title = "Oure Translator 1";
-            Translator translator = new Translator("translatorQueue.d");
+            Console.Title = "Our Translator 1";
+            Translator translator = new Translator("groupB.web.bank.translator");
             Console.WriteLine("translator is Running...");
             translator.StartReceiving();
             Console.ReadLine();

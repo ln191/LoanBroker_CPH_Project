@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OurTranslator2", "OurTransl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBank", "WebBank\WebBank.csproj", "{974F30E2-289F-4615-9D36-DB9EDCC3A48E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Normalizer", "Normalizer\Normalizer.csproj", "{40C313DB-6E3E-488C-9342-943B5E4DDB42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyAggregator", "MyAggregator\MyAggregator.csproj", "{9F3E87C9-0954-43BE-812D-A2B939D07368}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{974F30E2-289F-4615-9D36-DB9EDCC3A48E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40C313DB-6E3E-488C-9342-943B5E4DDB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40C313DB-6E3E-488C-9342-943B5E4DDB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40C313DB-6E3E-488C-9342-943B5E4DDB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40C313DB-6E3E-488C-9342-943B5E4DDB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F3E87C9-0954-43BE-812D-A2B939D07368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F3E87C9-0954-43BE-812D-A2B939D07368}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F3E87C9-0954-43BE-812D-A2B939D07368}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F3E87C9-0954-43BE-812D-A2B939D07368}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,11 +25,11 @@ namespace GetBanks
 
         public BankEnricher(string receiveQueueName, string sendToQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -64,14 +64,14 @@ namespace GetBanks
         private List<Bank> GetBank(string ssn, double amount, int duration, int creditScore)
         {
             List<Bank> tempBanks = new List<Bank>();
-            //Bank danskeBank = new Bank("Danske Bank", "translatorQueue.a");
-            //Bank jyskeBank = new Bank("Jyske Bank", "translatorQueue.b");
-            //tempBanks.Add(danskeBank);
-
-            foreach(string s in bankCaller.Call(amount, duration, creditScore))
-            {
-                tempBanks.Add(new Bank(s, s));
-            }
+            Bank jsonBank = new Bank("Json Bank", "groupB.json.bank.translator");
+            Bank xmlBank = new Bank("Xml Bank", "groupB.xml.bank.translator");
+            tempBanks.Add(jsonBank);
+            tempBanks.Add(xmlBank);
+            //foreach (string s in bankCaller.Call(amount, duration, creditScore))
+            //{
+            //    tempBanks.Add(new Bank(s, s));
+            //}
 
             return tempBanks;
         }

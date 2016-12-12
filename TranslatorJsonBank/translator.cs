@@ -4,6 +4,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +18,9 @@ namespace TranslatorJsonBank
 
         public translator(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -40,15 +41,15 @@ namespace TranslatorJsonBank
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
                 //the backslashes is used to say that the quotes is a part of the string
-                string message = "{ \"ssn\":" + loanRequest.SNN
+                string message = "{ \"ssn\":" + loanRequest.SNN.Replace("-", "")
 
-                 + ",\"creditScore\":" + loanRequest.CreditScore.ToString()
+                 + ",\"creditScore\":" + loanRequest.CreditScore
 
-                 + ",\"loanAmount\":" + loanRequest.Amount.ToString()
+                 + ",\"loanAmount\":" + loanRequest.Amount
 
-                 + ",\"loanDuration\":" + loanRequest.Duration.ToString() + " }";
+                 + ",\"loanDuration\":" + loanRequest.Duration + " }";
 
-                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
+                //rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
                 //Send()  send the message to the bank enricher Channel
                 rabbitConn.Send(message, header, false, "cphbusiness.bankJSON");
                 //release the message from the queue, allowing us to take in the next message

@@ -12,27 +12,26 @@ namespace RulebaseService
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
-    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line.
     // [System.Web.Script.Services.ScriptService]
     public class RuleBaseService : System.Web.Services.WebService
     {
-
         [WebMethod]
         public List<string> GetBankQueues(Double Amount, int Duration, int CreditScore)
         {
             List<string> queues = new List<string>();
-            queues.Add("translatorQueue.a");
+            queues.Add("groupB.json.bank.translator");
             if (CreditScore >= 300 && Duration >= 6)
             {
-                queues.Add("translatorQueue.b");
+                queues.Add("groupB.xml.bank.translator");
             }
             if (CreditScore >= 600 && Duration >= 10 && Amount >= 10000000)
             {
-                queues.Add("translatorQueue.c");
+                queues.Add("groupB.our.bank.translator");
             }
             if (CreditScore >= 200 && Amount >= 10000)
             {
-                queues.Add("translatorQueue.d");
+                queues.Add("groupB.web.bank.translator");
             }
 
             return queues;

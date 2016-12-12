@@ -17,9 +17,9 @@ namespace TranslatorXmlBank
 
         public Translator(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -46,26 +46,26 @@ namespace TranslatorXmlBank
                 {
                     dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
                 }
-                catch(Exception EX)
+                catch (Exception EX)
                 {
                     Console.WriteLine(EX);
                 }
 
                 //setting up the message to the banks XML format
-              
-                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3}</loanDuration></LoanRequest>",
 
-                 loanRequest.SNN,
+                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3} CET</loanDuration></LoanRequest>",
 
-                 loanRequest.CreditScore.ToString(),
+                 loanRequest.SNN.Replace("-", ""),
 
-                 loanRequest.Amount.ToString(),
+                 loanRequest.CreditScore,
 
-                 dateDuration.ToString()
+                 loanRequest.Amount,
+
+                 dateDuration
 
                  );
 
-                rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankXML", "fanout");
+                //rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankXML", "fanout");
                 //Send()  send the message to the bank enricher Channel
                 rabbitConn.Send(message, header, false, "cphbusiness.bankXML");
                 //release the message from the queue, allowing us to take in the next message

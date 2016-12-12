@@ -11,7 +11,7 @@ namespace TranslatorJsonBank
         private static void Main(string[] args)
         {
             Console.Title = "JsonBank Translator";
-            translator translator = new translator("translatorQueue.a");
+            translator translator = new translator("groupB.json.bank.translator");
             Console.WriteLine("Translator is running...");
             translator.StartReceiving();
             Console.ReadLine();

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OurTranslator1
 {
-    class Translator
+    internal class Translator
     {
         private string receiveQueueName;
         private RabbitConnection rabbitConn;
@@ -19,9 +19,9 @@ namespace OurTranslator1
 
         public Translator(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()

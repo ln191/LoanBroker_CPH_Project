@@ -11,7 +11,7 @@ namespace TranslatorXmlBank
         private static void Main(string[] args)
         {
             Console.Title = "Translator XML Bank";
-            Translator translator = new Translator("translatorQueue.b");
+            Translator translator = new Translator("groupB.xml.bank.translator");
             Console.WriteLine("translator is Running...");
             translator.StartReceiving();
             Console.ReadLine();
