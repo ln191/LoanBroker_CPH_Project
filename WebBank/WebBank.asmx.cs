@@ -35,8 +35,8 @@ namespace WebBank
             }
 
             List<String> joinList = new List<string>();
-            joinList.Add("ssn:" + ssn);
-            joinList.Add("intrestRate:" +  intrestRate.ToString());
+            joinList.Add(ssn);
+            joinList.Add(intrestRate.ToString());
             return string.Join("#",joinList);
         }
     }

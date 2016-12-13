@@ -11,7 +11,7 @@ namespace OurTranslator1
     {
         WebBankSoapClient proxy = null;
         string ResponseString;
-
+        
         public String Call(string ssn, int duration, int creditScore)
         {
             //initializes and envokes the methode of the webservice

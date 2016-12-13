@@ -56,12 +56,11 @@ namespace OurTranslator2
 
                 List<string> messageList = new List<string>();
 
-                messageList.Add(loanRequest.SNN);
-                messageList.Add(loanRequest.CreditScore.ToString());
                 messageList.Add(loanRequest.Amount.ToString());
                 messageList.Add(dateDuration.ToString());
-
-                String message = string.Join("#", messageList);
+                messageList.Add(loanRequest.SNN);
+                
+                String message = string.Join("*", messageList);
 
                 //Send()  send the message to the bank enricher Channel
                 rabbitConn.Send(message, sendToQueueName, header, false);

@@ -37,8 +37,29 @@ namespace MessageBank
                 var header = ea.BasicProperties;
                 //Serialize message
 
-                Console.WriteLine("ok?");
+                string request = Encoding.UTF8.GetString(body);
+                string[] values = request.Split('*');
+              
 
+                string Intrest;
+                if(double.Parse(values[0]) <= 10000)
+                {
+                    Intrest = "2.5";
+                }
+                else
+                {
+                    Intrest = "4";
+                }
+
+                List<string> messageList = new List<string>();
+                messageList[0] = "OureBank";
+                messageList[1] = values[2];
+                messageList[2] = Intrest;
+
+
+                string message = string.Join("*", messageList);
+
+                rabbitConn.Send(message, header.ReplyTo, false);
 
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);

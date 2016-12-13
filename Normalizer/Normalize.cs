@@ -29,6 +29,7 @@ namespace Normalizer
             rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.web.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -43,6 +44,9 @@ namespace Normalizer
                                      noAck: false,
                                      consumer: consumer);
             rabbitConn.Channel.BasicConsume(queue: "groupB.our.bank.reply",
+                                     noAck: false,
+                                     consumer: consumer);
+            rabbitConn.Channel.BasicConsume(queue: "groupB.web.bank.reply",
                                      noAck: false,
                                      consumer: consumer);
             //get next message, if any
@@ -65,6 +69,20 @@ namespace Normalizer
                         TextReader reader = new StringReader(Encoding.UTF8.GetString(body));
                         loanResponse = (LoanResponse)myXmlSerializer.Deserialize(reader);
                         loanResponse.BankName = values[1];
+                        break;
+
+                    case "web":
+                        loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
+                        loanResponse.BankName = values[1];
+                        break;
+
+                    case "our":
+                        string reply = Encoding.UTF8.GetString(body);
+                        string[] replyArray = reply.Split('*');
+                        loanResponse = new LoanResponse();
+                        loanResponse.BankName = replyArray[0];
+                        loanResponse.SNN = replyArray[1];
+                        loanResponse.InterestRate = Double.Parse(replyArray[2]);
                         break;
 
                     default:
