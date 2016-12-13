@@ -11,7 +11,7 @@ namespace MyAggregator
         private static void Main(string[] args)
         {
             Console.Title = "Aggregator";
-            Aggregator aggregator = new Aggregator("groupB.aggregator", "groupB.temp.client", "groupB.aggregator.info");
+            Aggregator aggregator = new Aggregator("groupB.aggregator", "groupB.webservice", "groupB.aggregator.info");
             Console.WriteLine();
             Console.WriteLine("Aggregator is running...");
             aggregator.StartReceiving();
