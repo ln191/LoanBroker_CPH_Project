@@ -64,14 +64,14 @@ namespace GetBanks
         private List<Bank> GetBank(string ssn, double amount, int duration, int creditScore)
         {
             List<Bank> tempBanks = new List<Bank>();
-            Bank jsonBank = new Bank("Json Bank", "groupB.json.bank.translator");
-            Bank xmlBank = new Bank("Xml Bank", "groupB.xml.bank.translator");
-            tempBanks.Add(jsonBank);
-            tempBanks.Add(xmlBank);
-            //foreach (string s in bankCaller.Call(amount, duration, creditScore))
-            //{
-            //    tempBanks.Add(new Bank(s, s));
-            //}
+            //Bank jsonBank = new Bank("Json Bank", "groupB.json.bank.translator");
+            //Bank xmlBank = new Bank("Xml Bank", "groupB.xml.bank.translator");
+            //tempBanks.Add(jsonBank);
+            //tempBanks.Add(xmlBank);
+            foreach (string s in bankCaller.Call(amount, duration, creditScore))
+            {
+                tempBanks.Add(new Bank(s, s));
+            }
 
             return tempBanks;
         }

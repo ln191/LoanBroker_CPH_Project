@@ -18,11 +18,11 @@ namespace OurTranslator2
 
         public Translator(string receiveQueueName, string sendToQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            //rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()

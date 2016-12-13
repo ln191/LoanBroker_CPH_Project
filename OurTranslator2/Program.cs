@@ -11,7 +11,7 @@ namespace OurTranslator2
         static void Main(string[] args)
         {
             Console.Title = "Oure Translator 2";
-            Translator translator = new Translator("translatorQueue.d", "MessageBank");
+            Translator translator = new Translator("groupB.our.bank.translator", "groupB.MessageBank");
             Console.WriteLine("translator is Running...");
             translator.StartReceiving();
             Console.ReadLine();

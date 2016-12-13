@@ -13,14 +13,14 @@ namespace MessageBank
     class Bank
     {
         private string receiveQueueName;
-        private string sendToQueueName;
+      
         private RabbitConnection rabbitConn;
 
-        public Bank(string receiveQueueName, string sendToQueueName)
+        public Bank(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection();
+            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            this.sendToQueueName = sendToQueueName;
+       
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
@@ -52,14 +52,14 @@ namespace MessageBank
                 }
 
                 List<string> messageList = new List<string>();
-                messageList[0] = "OureBank";
-                messageList[1] = values[2];
-                messageList[2] = Intrest;
+                messageList.Add("OureBank");
+                messageList.Add(values[2]);
+                messageList.Add(Intrest);
 
 
                 string message = string.Join("*", messageList);
 
-                rabbitConn.Send(message, header.ReplyTo, false);
+                rabbitConn.Send(message, header.ReplyTo, header, false);
 
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);

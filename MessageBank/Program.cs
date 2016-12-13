@@ -11,7 +11,7 @@ namespace MessageBank
         static void Main(string[] args)
         {
             Console.Title = "Message Bank";
-            Bank bank = new Bank("MessageBank", "Gather?");
+            Bank bank = new Bank("groupB.MessageBank");
             Console.WriteLine("Bank is Running...");
             bank.StartReceiving();
             Console.ReadLine();

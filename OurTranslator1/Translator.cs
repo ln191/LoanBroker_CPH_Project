@@ -51,7 +51,7 @@ namespace OurTranslator1
                 loanResponse.SNN = values[0];
                 loanResponse.InterestRate = Double.Parse(values[1]);
 
-                rabbitConn.Send(loanResponse.ToString(), "groupB.web.bank.reply", false);
+                rabbitConn.Send(loanResponse.ToString(), "groupB.web.bank.reply", header,false);
 
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
