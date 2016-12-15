@@ -40,7 +40,7 @@ namespace TestClint
             loanRequest.Duration = Convert.ToInt32(duration);
 
             string msg = loanRequest.ToString();
-            rabbitConn.Send(msg, "groupB.temp.loanRequest", false);
+            rabbitConn.Send(msg, "groupB.loanRequest", false);
             //RabbitSender sender = new RabbitSender("loanRequest");
             //sender.Send(msg);
             Console.WriteLine("our request has now been send, {0} ", msg);

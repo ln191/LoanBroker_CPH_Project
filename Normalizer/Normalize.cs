@@ -61,6 +61,7 @@ namespace Normalizer
                 switch (values[1])
                 {
                     case "json":
+                        Console.WriteLine(Encoding.UTF8.GetString(body));
                         loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
                         loanResponse.BankName = values[1];
                         break;
@@ -80,9 +81,9 @@ namespace Normalizer
                         string reply = Encoding.UTF8.GetString(body);
                         string[] replyArray = reply.Split('*');
                         loanResponse = new LoanResponse();
-                        loanResponse.BankName = replyArray[0];
-                        loanResponse.SNN = replyArray[1];
+                        loanResponse.SSN = replyArray[1];
                         loanResponse.InterestRate = Double.Parse(replyArray[2]);
+                        loanResponse.BankName = values[1];
                         break;
 
                     default:

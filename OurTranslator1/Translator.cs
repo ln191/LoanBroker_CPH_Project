@@ -48,7 +48,7 @@ namespace OurTranslator1
                 string[] values;
                 values = mesage.Split('#');
                 LoanResponse loanResponse = new LoanResponse();
-                loanResponse.SNN = values[0];
+                loanResponse.SSN = values[0];
                 loanResponse.InterestRate = Double.Parse(values[1]);
 
                 rabbitConn.Send(loanResponse.ToString(), "groupB.web.bank.reply", header,false);

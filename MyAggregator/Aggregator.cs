@@ -18,28 +18,28 @@ namespace MyAggregator
         private string sendToQueueName;
 
         private List<LoanResponse> responses;
-        private Dictionary<string, LoanRequest> requests;
+        private Dictionary<IBasicProperties, LoanRequest> requests;
 
-        private string corrID;
+        private IBasicProperties corrID;
         private Timer aTimer;
         private int bankCount;
         private LoanResponse bestRate;
         private RabbitConnection rabbitConn;
 
-        public Aggregator(string receiveQueueName, string sendToQueueName, string requestInfoQueueName)
+        public Aggregator(string receiveQueueName, string requestInfoQueueName)
         {
-            corrID = "";
+            corrID = null;
             bankCount = 0;
 
             aTimer = new Timer();
             aTimer.Interval = 5000;
             aTimer.Enabled = false;
 
-            requests = new Dictionary<string, LoanRequest>();
+            requests = new Dictionary<IBasicProperties, LoanRequest>();
             responses = new List<LoanResponse>();
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            this.sendToQueueName = sendToQueueName;
+      
             this.requestInfoQueueName = requestInfoQueueName;
             rabbitConn.Channel.QueueDeclare(queue: requestInfoQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
@@ -66,27 +66,28 @@ namespace MyAggregator
                 if (ea.RoutingKey == requestInfoQueueName && requests.Count < 4)
                 {
                     LoanRequest loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
-                    requests.Add(header.CorrelationId, loanRequest);
+                    string stringRequest = Encoding.UTF8.GetString(body);
+                    requests.Add(header, loanRequest);
                     rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
                 }
                 else if (ea.RoutingKey == receiveQueueName && requests.Count != 0)
                 {
-                    if (corrID == "")
+                    if (corrID == null)
                     {
-                        corrID = header.CorrelationId;
+                        corrID = header;
                         aTimer.Enabled = true;
                     }
-                    if (corrID != "")
+                    if (corrID != null)
                     {
                         for (int req = 0; req < requests.Count; req++)
                         {
                             var element = requests.ElementAt(req);
                             var key = element.Key;
                             var value = element.Value;
-                            if (key == header.CorrelationId)
+                            if (key.CorrelationId == header.CorrelationId)
                             {
                                 loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
-                                loanResponse.SNN = value.SNN;
+                                //loanResponse.SNN = value.SNN;
                                 responses.Add(loanResponse);
                                 bankCount++;
                                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
@@ -95,11 +96,11 @@ namespace MyAggregator
                                 {
                                     bestRate = BestOffer();
                                     Console.WriteLine();
-                                    Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SNN, bestRate.BankName, bestRate.InterestRate);
-                                    //rabbitConn.Send(BestOffer().ToString(), sendToQueueName, false);
+                                    Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SSN, bestRate.BankName, bestRate.InterestRate);
+                                    rabbitConn.Send(BestOffer().ToString(), key.ReplyTo , false);
                                     aTimer.Enabled = false;
                                     bankCount = 0;
-                                    corrID = "";
+                                    corrID = null;
                                     requests.Remove(key);
                                     responses.Clear();
                                 }
@@ -162,10 +163,10 @@ namespace MyAggregator
                 //rabbitConn.Send(BestOffer().ToString(), sendToQueueName, false);
                 bestRate = BestOffer();
                 Console.WriteLine();
-                Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SNN, bestRate.BankName, bestRate.InterestRate);
+                Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SSN, bestRate.BankName, bestRate.InterestRate);
                 bankCount = 0;
                 requests.Remove(corrID);
-                corrID = "";
+                corrID = null;
                 responses.Clear();
             }
             aTimer.Enabled = false;

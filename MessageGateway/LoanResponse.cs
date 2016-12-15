@@ -10,9 +10,9 @@ namespace MessageGateway
     public class LoanResponse
     {
         public double InterestRate { get; set; }
-        public string SNN { get; set; }
-        public string BankName { get; set; }
+        public string SSN { get; set; }
 
+        public string BankName { get; set; }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);

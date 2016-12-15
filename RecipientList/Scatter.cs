@@ -50,24 +50,22 @@ namespace RecipientList
                 //Get the banks to send loan request to
                 List<Bank> banks = loanRequest.Banks;
 
+                rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", header, false);
                 //rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", basicProperties, false);
                 //Send()  send the message to the translator for the banks who want the request
-                SendScatterMsg(loanRequest.ToString(), banks);
+                SendScatterMsg(loanRequest.ToString(),header, banks);
 
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
         }
 
-        private void SendScatterMsg(string message, List<Bank> Banks)
+        private void SendScatterMsg(string message, IBasicProperties header, List<Bank> Banks)
         {
             string responseQueue;
-            string correlationId = Guid.NewGuid().ToString();
-            IBasicProperties basicProperties = rabbitConn.Channel.CreateBasicProperties();
-
-            basicProperties.CorrelationId = correlationId;
+           
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            rabbitConn.Channel.BasicPublish("", "groupB.aggregator.info", basicProperties, messageBytes);
+            
             if (Banks.Count > 0)
             {
                 //rabbitConn.Channel.BasicPublish("", "groupB.aggregator.info", header, messageBytes);
@@ -76,8 +74,8 @@ namespace RecipientList
                     string[] values = bank.RoutingKey.Split('.');
                     values[3] = "reply";
                     responseQueue = string.Join(".", values);
-                    basicProperties.ReplyTo = responseQueue;
-                    rabbitConn.Channel.BasicPublish("", bank.RoutingKey, basicProperties, messageBytes);
+                    header.ReplyTo = responseQueue;
+                    rabbitConn.Channel.BasicPublish("", bank.RoutingKey, header, messageBytes);
                     Console.WriteLine("message: {0}, send to: {1} Channel", message, bank.RoutingKey);
                 }
             }
