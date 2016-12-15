@@ -15,7 +15,6 @@ namespace MyAggregator
     {
         private string receiveQueueName;
         private string requestInfoQueueName;
-        private string sendToQueueName;
 
         private List<LoanResponse> responses;
         private Dictionary<IBasicProperties, LoanRequest> requests;
@@ -39,7 +38,7 @@ namespace MyAggregator
             responses = new List<LoanResponse>();
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-      
+
             this.requestInfoQueueName = requestInfoQueueName;
             rabbitConn.Channel.QueueDeclare(queue: requestInfoQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
@@ -87,7 +86,7 @@ namespace MyAggregator
                             if (key.CorrelationId == header.CorrelationId)
                             {
                                 loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
-                                //loanResponse.SNN = value.SNN;
+
                                 responses.Add(loanResponse);
                                 bankCount++;
                                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
@@ -95,9 +94,7 @@ namespace MyAggregator
                                 if (bankCount == value.Banks.Count)
                                 {
                                     bestRate = BestOffer();
-                                    Console.WriteLine();
-                                    Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SSN, bestRate.BankName, bestRate.InterestRate);
-                                    rabbitConn.Send(BestOffer().ToString(), key.ReplyTo , false);
+                                    rabbitConn.Send(BestOffer().ToString(), key.ReplyTo, key, false);
                                     aTimer.Enabled = false;
                                     bankCount = 0;
                                     corrID = null;
@@ -162,8 +159,6 @@ namespace MyAggregator
             {
                 //rabbitConn.Send(BestOffer().ToString(), sendToQueueName, false);
                 bestRate = BestOffer();
-                Console.WriteLine();
-                Console.WriteLine("The best offer for SNN: {0} is from {1} with and interest Rate on: {2}", bestRate.SSN, bestRate.BankName, bestRate.InterestRate);
                 bankCount = 0;
                 requests.Remove(corrID);
                 corrID = null;

@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bank.cs" />
-    <Compile Include="BankResponse.cs" />
     <Compile Include="LoanRequest.cs" />
     <Compile Include="LoanResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

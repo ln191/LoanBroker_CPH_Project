@@ -5,7 +5,7 @@ namespace MessageGateway
 {
     public class LoanRequest
     {
-        public string SNN { get; set; }
+        public string SSN { get; set; }
         public int CreditScore { get; set; }
         public double Amount { get; set; }
         public int Duration { get; set; }

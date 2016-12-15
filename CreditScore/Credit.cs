@@ -50,7 +50,7 @@ namespace CreditScore
 
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
-                string ssn = loanRequest.SNN;
+                string ssn = loanRequest.SSN;
 
                 //Enrich the message, add the credit score string from GetCreditScore to loanRequest
 

@@ -41,7 +41,7 @@ namespace TranslatorJsonBank
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
                 //the backslashes is used to say that the quotes is a part of the string
-                string message = "{ \"ssn\":" + loanRequest.SNN.Replace("-", "")
+                string message = "{ \"ssn\":" + loanRequest.SSN.Replace("-", "")
 
                  + ",\"creditScore\":" + loanRequest.CreditScore
 

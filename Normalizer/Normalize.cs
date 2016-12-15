@@ -35,6 +35,7 @@ namespace Normalizer
         public void StartReceiving()
         {
             LoanResponse loanResponse;
+
             List<LoanResponse> responses = new List<LoanResponse>();
             var consumer = new EventingBasicConsumer(rabbitConn.Channel);
             rabbitConn.Channel.BasicConsume(queue: "groupB.json.bank.reply",
@@ -68,7 +69,9 @@ namespace Normalizer
 
                     case "xml":
                         TextReader reader = new StringReader(Encoding.UTF8.GetString(body));
+                        Console.WriteLine(Encoding.UTF8.GetString(body));
                         loanResponse = (LoanResponse)myXmlSerializer.Deserialize(reader);
+
                         loanResponse.BankName = values[1];
                         break;
 

@@ -35,7 +35,7 @@ namespace TestClint
                     correctInfo = true;
                 }
             }
-            loanRequest.SNN = ssn;
+            loanRequest.SSN = ssn;
             loanRequest.Amount = Convert.ToDouble(amount);
             loanRequest.Duration = Convert.ToInt32(duration);
 

@@ -44,14 +44,14 @@ namespace OurTranslator1
                 //handles the set condition "The loan duration will be calculated from 1/1 1970. Therefore loan duration of 3 years must look as the above example."
                 //DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
 
-                string mesage = WBC.Call(loanRequest.SNN, loanRequest.Duration, loanRequest.CreditScore);
+                string mesage = WBC.Call(loanRequest.SSN, loanRequest.Duration, loanRequest.CreditScore);
                 string[] values;
                 values = mesage.Split('#');
                 LoanResponse loanResponse = new LoanResponse();
                 loanResponse.SSN = values[0];
                 loanResponse.InterestRate = Double.Parse(values[1]);
 
-                rabbitConn.Send(loanResponse.ToString(), "groupB.web.bank.reply", header,false);
+                rabbitConn.Send(loanResponse.ToString(), "groupB.web.bank.reply", header, false);
 
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };

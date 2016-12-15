@@ -51,7 +51,7 @@ namespace GetBanks
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
 
                 //Enrich the message, add the list of banks that like to have this loanRequst
-                loanRequest.Banks = GetBank(loanRequest.SNN, loanRequest.Amount, loanRequest.Duration, loanRequest.CreditScore);
+                loanRequest.Banks = GetBank(loanRequest.SSN, loanRequest.Amount, loanRequest.Duration, loanRequest.CreditScore);
 
                 //Send()  send the message to the bank enricher channel
                 rabbitConn.Send(loanRequest.ToString(), sendToQueueName, header, false);

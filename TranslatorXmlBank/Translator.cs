@@ -53,15 +53,15 @@ namespace TranslatorXmlBank
 
                 //setting up the message to the banks XML format
 
-                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3} CET</loanDuration></LoanRequest>",
+                string message = string.Format("<LoanRequest><ssn>{0}</ssn><creditScore>{1}</creditScore><loanAmount>{2}</loanAmount><loanDuration>{3}</loanDuration></LoanRequest>",
 
-                 loanRequest.SNN.Replace("-", ""),
+                 loanRequest.SSN.Replace("-", ""),
 
                  loanRequest.CreditScore,
 
                  loanRequest.Amount,
 
-                 dateDuration
+                 dateDuration.ToString("yyyy-MM-dd HH:mm:ss.f CET")
 
                  );
 

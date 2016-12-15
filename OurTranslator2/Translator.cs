@@ -58,8 +58,8 @@ namespace OurTranslator2
 
                 messageList.Add(loanRequest.Amount.ToString());
                 messageList.Add(dateDuration.ToString());
-                messageList.Add(loanRequest.SNN);
-                
+                messageList.Add(loanRequest.SSN);
+
                 String message = string.Join("*", messageList);
 
                 //Send()  send the message to the bank enricher Channel
