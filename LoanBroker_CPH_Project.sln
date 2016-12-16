@@ -44,6 +44,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 		{772E1CBD-07BD-41A2-8E74-7D38FD387633} = {772E1CBD-07BD-41A2-8E74-7D38FD387633}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{5ED306BE-2554-4722-AE0E-7075B2D99777}"
+	ProjectSection(ProjectDependencies) = postProject
+		{772E1CBD-07BD-41A2-8E74-7D38FD387633} = {772E1CBD-07BD-41A2-8E74-7D38FD387633}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +119,10 @@ Global
 		{0E162987-707F-4B40-880D-18CAE5A46B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E162987-707F-4B40-880D-18CAE5A46B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E162987-707F-4B40-880D-18CAE5A46B4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED306BE-2554-4722-AE0E-7075B2D99777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED306BE-2554-4722-AE0E-7075B2D99777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED306BE-2554-4722-AE0E-7075B2D99777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED306BE-2554-4722-AE0E-7075B2D99777}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
