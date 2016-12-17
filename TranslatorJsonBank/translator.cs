@@ -20,7 +20,7 @@ namespace TranslatorJsonBank
         {
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -30,7 +30,7 @@ namespace TranslatorJsonBank
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
-            //get next message, if any
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
@@ -49,8 +49,7 @@ namespace TranslatorJsonBank
 
                  + ",\"loanDuration\":" + loanRequest.Duration + " }";
 
-                //rabbitConn.Channel.ExchangeDeclare("cphbusiness.bankJSON", "fanout");
-                //Send()  send the message to the bank enricher Channel
+                //Send()  send the message to the Json bank
                 rabbitConn.Send(message, header, false, "cphbusiness.bankJSON");
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);

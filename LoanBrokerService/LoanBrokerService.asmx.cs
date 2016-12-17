@@ -34,9 +34,11 @@ namespace LoanBrokerService
 
             string msg = loanRequest.ToString();
             //set message header properties
+            //give the message a corrId
             string corrId = Guid.NewGuid().ToString();
             IBasicProperties prop = rabbitConn.Channel.CreateBasicProperties();
             prop.CorrelationId = corrId;
+            //give message a temp reply queue
             string tempreplyQueueName = rabbitConn.Channel.QueueDeclare().QueueName;
             string replyQueueName = tempreplyQueueName.Replace("amq", "groupB.tmp.reply");
             prop.ReplyTo = replyQueueName;
@@ -45,7 +47,6 @@ namespace LoanBrokerService
             rabbitConn.Send(msg, "groupB.loanRequest", prop, false);
 
             //Wait for answer
-            LoanResponse loanResponse;
             rabbitConn.Channel.QueueDeclare(queue: replyQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
             var consumer = new QueueingBasicConsumer(rabbitConn.Channel);
 
@@ -53,6 +54,7 @@ namespace LoanBrokerService
                                      noAck: false,
                                      consumer: consumer);
             string response = null;
+            //sync receiving
             while (true)
             {
                 var ea = consumer.Queue.Dequeue();
@@ -62,10 +64,7 @@ namespace LoanBrokerService
 
                 if (header.CorrelationId == corrId)
                 {
-                    loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
-                    response = "The best offer on: " + loanResponse.SSN + " loan request, is from: " + loanResponse.BankName +
-                               " which offer an interest rate on: " + loanResponse.InterestRate;
-                    //remove the message from the queue
+                    response = Encoding.UTF8.GetString(body);
                     rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
                     break;
                 }

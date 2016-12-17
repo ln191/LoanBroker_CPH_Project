@@ -10,18 +10,19 @@ using System.Threading.Tasks;
 
 namespace MessageBank
 {
-    class Bank
+    internal class Bank
     {
         private string receiveQueueName;
-      
+
         private RabbitConnection rabbitConn;
 
         public Bank(string receiveQueueName)
         {
+            //Connects to RabbitMQ server
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-       
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            //Declare the queues needed in this program, sets durable to true in case of RabbitMQ breakdown.
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -30,19 +31,18 @@ namespace MessageBank
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
-            //get next message, if any
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
                 var header = ea.BasicProperties;
-                //Serialize message
 
+                //Deserialize message
                 string request = Encoding.UTF8.GetString(body);
                 string[] values = request.Split('*');
-              
 
                 string Intrest;
-                if(double.Parse(values[0]) <= 10000)
+                if (double.Parse(values[0]) <= 10000)
                 {
                     Intrest = "2.5";
                 }
@@ -56,12 +56,12 @@ namespace MessageBank
                 messageList.Add(values[2]);
                 messageList.Add(Intrest);
 
-
                 string message = string.Join("*", messageList);
 
+                //send message to the message requested reply queue
                 rabbitConn.Send(message, header.ReplyTo, header, false);
 
-                //release the message from the queue, allowing us to take in the next message
+                //Acknowledge that the message has been received and processed, then release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
         }

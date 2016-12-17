@@ -20,14 +20,14 @@ namespace RecipientList
         {
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.web.bank.translator", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.reply", durable: false, exclusive: true, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.translator", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.translator", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.translator", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.web.bank.translator", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.json.bank.reply", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.xml.bank.reply", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: "groupB.our.bank.reply", durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -38,7 +38,7 @@ namespace RecipientList
                                      noAck: false,
                                      consumer: consumer);
 
-            //get next message, if any
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
@@ -49,11 +49,18 @@ namespace RecipientList
 
                 //Get the banks to send loan request to
                 List<Bank> banks = loanRequest.Banks;
-
-                rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", header, false);
-                //rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", basicProperties, false);
-                //Send()  send the message to the translator for the banks who want the request
-                SendScatterMsg(loanRequest.ToString(),header, banks);
+                //if no banks is interested in the loan request
+                if (banks.Count == 0)
+                {
+                    string noBank = "No bank is Interested in your loan Request";
+                    rabbitConn.Send(noBank, header.ReplyTo, header, false);
+                }
+                else
+                {
+                    rabbitConn.Send(loanRequest.ToString(), "groupB.aggregator.info", header, false);
+                    //Send()  send the message to the translator for the banks who want the request
+                    SendScatterMsg(loanRequest.ToString(), header, banks);
+                }
 
                 //release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
@@ -63,25 +70,20 @@ namespace RecipientList
         private void SendScatterMsg(string message, IBasicProperties header, List<Bank> Banks)
         {
             string responseQueue;
-           
+
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            
-            if (Banks.Count > 0)
+
+            //send the message to all banks on the list of interested banks
+            foreach (Bank bank in Banks)
             {
-                //rabbitConn.Channel.BasicPublish("", "groupB.aggregator.info", header, messageBytes);
-                foreach (Bank bank in Banks)
-                {
-                    string[] values = bank.RoutingKey.Split('.');
-                    values[3] = "reply";
-                    responseQueue = string.Join(".", values);
-                    header.ReplyTo = responseQueue;
-                    rabbitConn.Channel.BasicPublish("", bank.RoutingKey, header, messageBytes);
-                    Console.WriteLine("message: {0}, send to: {1} Channel", message, bank.RoutingKey);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No bank in the bank list");
+                string[] values = bank.RoutingKey.Split('.');
+                values[3] = "reply";
+                responseQueue = string.Join(".", values);
+                //sets ReplyTo Queue
+                header.ReplyTo = responseQueue;
+                rabbitConn.Channel.BasicPublish("", bank.RoutingKey, header, messageBytes);
+                Console.WriteLine();
+                Console.WriteLine("message: {0}, send to: {1} Channel", message, bank.RoutingKey);
             }
         }
     }

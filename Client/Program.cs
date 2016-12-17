@@ -19,84 +19,80 @@ namespace Client
 
             while (true)
             {
-                
-                    Console.WriteLine("Welcome, to receive loan offers, you need to supply us with the following information.");
-                    bool noSSN = true;
-                    while(noSSN)
+                Console.WriteLine("Welcome, to receive loan offers, you need to supply us with the following information.");
+                bool noSSN = true;
+                while (noSSN)
+                {
+                    Console.WriteLine("SSN: ");
+                    try
                     {
-                        Console.WriteLine("SSN: ");
-                        try
+                        ssn = Console.ReadLine();
+                        if (ssn.Length != 11 || ssn[6] != '-')
                         {
-                            ssn = Console.ReadLine();
-                            if (ssn.Length != 11 || ssn[6] != '-')
-                            {
-                                throw new SSNException();
-                            }
-                            noSSN = false;
-
+                            throw new SSNException();
                         }
-                        catch (SSNException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        noSSN = false;
                     }
-
-                    bool noAmount = true;
-                    while (noAmount)
+                    catch (SSNException e)
                     {
-                        Console.WriteLine("Amount: ");
-                        try
-                        {
-                            amount = double.Parse(Console.ReadLine());
-                            if (amount <= 0)
-                            {
-                                throw new AmountException();
-                            }
-                            noAmount = false;
-                        }
-                        catch (AmountException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        Console.WriteLine(e.Message);
                     }
+                }
 
-                    bool noDuration = true;
-                    while (noDuration)
+                bool noAmount = true;
+                while (noAmount)
+                {
+                    Console.WriteLine("Amount: ");
+                    try
                     {
-                        Console.WriteLine("Duration: ");
-                        
-                        try
+                        amount = double.Parse(Console.ReadLine());
+                        if (amount <= 0)
                         {
-                            duration = int.Parse(Console.ReadLine());
-                            if(duration <=0 || duration > 360)
-                            {
-                                throw new DurationException();
-                            }
-                            noDuration = false;
+                            throw new AmountException();
                         }
-                        catch (DurationException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        noAmount = false;
                     }
-                       
-                    Console.WriteLine("Is the following information correct");
-                    Console.WriteLine("SSN: {0}\nAmount: {1}\nDuration: {2}\nY/n?", ssn, amount, duration);
-                
+                    catch (AmountException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+
+                bool noDuration = true;
+                while (noDuration)
+                {
+                    Console.WriteLine("Duration: ");
+
+                    try
+                    {
+                        duration = int.Parse(Console.ReadLine());
+                        if (duration <= 0 || duration > 360)
+                        {
+                            throw new DurationException();
+                        }
+                        noDuration = false;
+                    }
+                    catch (DurationException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+
+                Console.WriteLine("Is the following information correct");
+                Console.WriteLine("SSN: {0}\nAmount: {1}\nDuration: {2}\nY/n?", ssn, amount, duration);
+
                 if (Console.ReadKey().Key == ConsoleKey.Y)
                 {
                     Console.WriteLine();
                     offer = LBC.Call(ssn, amount, duration);
                     Console.WriteLine(offer);
-                    break;
                 }
             }
-            Console.ReadLine();
         }
 
         public class SSNException : ArgumentException
         {
-            public SSNException() : base("The SNN must be in this format XXXXXXXX-XXXX")
+            public SSNException() : base("The SNN must be in this format XXXXXX-XXXX")
             {
             }
         }

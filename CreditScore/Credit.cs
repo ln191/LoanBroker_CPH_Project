@@ -18,9 +18,6 @@ namespace CreditScore
 
         private CreditScoreCaller creditScoreCaller = new CreditScoreCaller();
 
-        //private ConnectionFactory connectionFactory;
-        //private IConnection connection;
-        //private IModel channel;
         private RabbitConnection rabbitConn;
 
         public CreditEnricher(string receiveQueueName, string sendToQueueName)
@@ -28,18 +25,38 @@ namespace CreditScore
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+
+            #region Declaring Queues Notes
+
+            /* Source: https://www.rabbitmq.com/tutorials/amqp-concepts.html
+               Before a queue can be used it has to be declared. Declaring a queue will cause it to be created if it does not already exist.
+               The declaration will have no effect if the queue does already exist and its attributes are the same as those in the declaration.
+               When the existing queue attributes are not the same as those in the declaration a channel-level exception with code 406(PRECONDITION_FAILED) will be raised.
+               Queue properties:
+                Durable (the queue will survive a broker restart)
+                Exclusive (used by only one connection and the queue will be deleted when that connection closes)
+                Auto-delete (queue is deleted when last consumer unsubscribes)
+                Arguments (some brokers use it to implement additional features like message TTL)
+              */
+
+            #endregion Declaring Queues Notes
+
+            //Declare the queues needed in this program, sets durable to true in case of RabbitMQ breakdown.
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
         {
             LoanRequest loanRequest;
             var consumer = new EventingBasicConsumer(rabbitConn.Channel);
+            //We set noAck to false so consumer would not acknowledge that you have received and processed the message and remove it from the queue;
+            //This is done to ensure that the message has been processed before it is remove from the queue it is consumed from.
+            //this way, if the program has a breakdown, the message will still be on the queue and another can consume the message and process it.
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
-            //get next message, if any, Async receiving
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
@@ -53,7 +70,6 @@ namespace CreditScore
                 string ssn = loanRequest.SSN;
 
                 //Enrich the message, add the credit score string from GetCreditScore to loanRequest
-
                 loanRequest.CreditScore = GetCreditScore(ssn);
 
                 //Send()  send the message to the bank enricher channel
@@ -77,7 +93,7 @@ namespace CreditScore
 
                 #endregion BasicAck facts notes
 
-                //release the message from the queue, allowing us to take in the next message
+                //Acknowledge that the message has been received and processed, then release the message from the queue, allowing us to take in the next message
                 rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
             };
         }
@@ -85,8 +101,7 @@ namespace CreditScore
         private int GetCreditScore(string ssn)
         {
             //send a soap message with the ssn to the creditscore webservice and wait for reply
-            //return a credit score string
-
+            //return a credit score int
             return creditScoreCaller.Call(ssn);
         }
     }

@@ -21,7 +21,7 @@ namespace OurTranslator1
         {
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -31,7 +31,7 @@ namespace OurTranslator1
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
-            //get next message, if any
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
@@ -39,10 +39,8 @@ namespace OurTranslator1
                 //Deserialize message
                 loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
 
+                Console.WriteLine();
                 Console.WriteLine(" [x] Received {0}", loanRequest.ToString());
-
-                //handles the set condition "The loan duration will be calculated from 1/1 1970. Therefore loan duration of 3 years must look as the above example."
-                //DateTime dateDuration = new DateTime(1970, 1, 1, 1, 0, 0).AddMonths(loanRequest.Duration);
 
                 string mesage = WBC.Call(loanRequest.SSN, loanRequest.Duration, loanRequest.CreditScore);
                 string[] values;

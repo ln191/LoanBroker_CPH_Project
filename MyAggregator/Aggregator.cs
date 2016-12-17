@@ -19,30 +19,30 @@ namespace MyAggregator
         private List<LoanResponse> responses;
         private Dictionary<IBasicProperties, LoanRequest> requests;
 
-        private IBasicProperties corrID;
         private Timer aTimer;
         private int bankCount;
+
         private LoanResponse bestRate;
         private RabbitConnection rabbitConn;
 
         public Aggregator(string receiveQueueName, string requestInfoQueueName)
         {
-            corrID = null;
             bankCount = 0;
-
+            //set timer props
             aTimer = new Timer();
-            aTimer.Interval = 5000;
+            aTimer.Interval = 30000;
             aTimer.Enabled = false;
+            aTimer.AutoReset = false;
 
             requests = new Dictionary<IBasicProperties, LoanRequest>();
             responses = new List<LoanResponse>();
+            //Connects to RabbitMQ server
             rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
             this.receiveQueueName = receiveQueueName;
 
             this.requestInfoQueueName = requestInfoQueueName;
-            rabbitConn.Channel.QueueDeclare(queue: requestInfoQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
-            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
-            //rabbitConn.Channel.QueueDeclare(queue: sendToQueueName, durable: false, exclusive: true, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: requestInfoQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void StartReceiving()
@@ -50,59 +50,66 @@ namespace MyAggregator
             LoanResponse loanResponse;
 
             var consumer = new EventingBasicConsumer(rabbitConn.Channel);
+            //We set noAck to false so consumer would not acknowledge that you have received and processed the message and remove it from the queue;
+            //This is done to ensure that the message has been processed before it is remove from the queue it is consumed from.
+            //this way, if the program has a breakdown, the message will still be on the queue and another can consume the message and process it.
             rabbitConn.Channel.BasicConsume(queue: receiveQueueName,
                                      noAck: false,
                                      consumer: consumer);
             rabbitConn.Channel.BasicConsume(queue: requestInfoQueueName,
                                     noAck: false,
                                     consumer: consumer);
-            //get next message, if any, Async receiving
+            //If a message is detected then it consumes it, and process it
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
                 var header = ea.BasicProperties;
 
+                //if the consumer get a message from the recipient list it will store up to 3 loanRequest at the time
                 if (ea.RoutingKey == requestInfoQueueName && requests.Count < 4)
                 {
                     LoanRequest loanRequest = JsonConvert.DeserializeObject<LoanRequest>(Encoding.UTF8.GetString(body));
                     string stringRequest = Encoding.UTF8.GetString(body);
+                    //saves it in a dictionary
                     requests.Add(header, loanRequest);
+
+                    //Acknowledge that the message has been received and processed, then release the message from the queue, allowing us to take in the next message
                     rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
                 }
+                // if the message is from the normalizer and there at lest one loanRequest in the dictionary
                 else if (ea.RoutingKey == receiveQueueName && requests.Count != 0)
                 {
-                    if (corrID == null)
+                    if (requests.First().Key.CorrelationId == header.CorrelationId)
                     {
-                        corrID = header;
-                        aTimer.Enabled = true;
-                    }
-                    if (corrID != null)
-                    {
-                        for (int req = 0; req < requests.Count; req++)
+                        loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
+                        responses.Add(loanResponse);
+                        bankCount++;
+                        //Acknowledge that the message has been received and processed, then release the message from the queue, allowing us to take in the next message
+                        rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
+                        Console.WriteLine();
+                        Console.WriteLine(" [x] Received {0}", loanResponse.ToString());
+                        //checks and see if all banks there has been sent this loanRequest has answered.
+                        if (bankCount == requests.First().Value.Banks.Count)
                         {
-                            var element = requests.ElementAt(req);
-                            var key = element.Key;
-                            var value = element.Value;
-                            if (key.CorrelationId == header.CorrelationId)
-                            {
-                                loanResponse = JsonConvert.DeserializeObject<LoanResponse>(Encoding.UTF8.GetString(body));
+                            //finds the best offer of the banks
+                            bestRate = BestOffer();
+                            string bestoffer = "The best offer on: " + bestRate.SSN + " loan request, is from: " + bestRate.BankName +
+                               " which offer an interest rate on: " + bestRate.InterestRate;
+                            //send the best offer to the original loanRequests ReplyTo Queue
+                            rabbitConn.Send(bestoffer, requests.First().Key.ReplyTo, requests.First().Key, false);
 
-                                responses.Add(loanResponse);
-                                bankCount++;
-                                rabbitConn.Channel.BasicAck(ea.DeliveryTag, false);
-                                Console.WriteLine(" [x] Received {0}", loanResponse.ToString());
-                                if (bankCount == value.Banks.Count)
-                                {
-                                    bestRate = BestOffer();
-                                    rabbitConn.Send(BestOffer().ToString(), key.ReplyTo, key, false);
-                                    aTimer.Enabled = false;
-                                    bankCount = 0;
-                                    corrID = null;
-                                    requests.Remove(key);
-                                    responses.Clear();
-                                }
-                            }
+                            aTimer.Stop();
+
+                            bankCount = 0;
+
+                            requests.Remove(requests.First().Key);
+                            responses.Clear();
                         }
+                    }
+                    else
+                    {
+                        //release the message from the queue, allowing us to take in the next message
+                        rabbitConn.Channel.BasicReject(ea.DeliveryTag, true);
                     }
                 }
                 else
@@ -112,25 +119,16 @@ namespace MyAggregator
                     //release the message from the queue, allowing us to take in the next message
                     rabbitConn.Channel.BasicReject(ea.DeliveryTag, true);
                 }
+                //if there are any request to check correlationID with start timer, so if the all the banks has not responded within the time limit, it will send what it has
+                if (requests.Count > 0)
+                {
+                    if (!aTimer.Enabled)
+                    {
+                        aTimer.Start();
+                    }
+                }
+                //If the a set time has past it will find the best offer of the response received and send it
                 aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-
-                #region BasicAck facts notes
-
-                /*
-                    In order to make sure a message is never lost, RabbitMQ supports message acknowledgments.
-                    An ack(nowledgement) is sent back from the consumer to tell RabbitMQ that a particular message has been received,
-                    processed and that RabbitMQ is free to delete it.
-
-                    If a consumer dies (its channel is closed, connection is closed,
-                    or TCP connection is lost) without sending an ack, RabbitMQ will understand that a message wasn't processed fully and will re-queue it.
-                    If there are other consumers online at the same time, it will then quickly redeliver it to another consumer.
-                    That way you can be sure that no message is lost, even if the workers occasionally die.
-
-                    There aren't any message timeouts; RabbitMQ will redeliver the message when the consumer dies.
-                    It's fine even if processing a message takes a very, very long time.
-                */
-
-                #endregion BasicAck facts notes
             };
         }
 
@@ -149,22 +147,30 @@ namespace MyAggregator
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            if (responses.Count == 0)
+            aTimer.Stop();
+            if (requests.Count > 0)
             {
-                //rabbitConn.Send("No bank was interested", sendToQueueName, false);
-                Console.WriteLine();
-                Console.WriteLine("No Bank was interested");
+                //if no responses had been received within the time limit
+                if (responses.Count == 0)
+                {
+                    rabbitConn.Send("No bank responded within the time limit", requests.First().Key.ReplyTo, requests.First().Key, false);
+                    Console.WriteLine();
+                    Console.WriteLine("No bank responded within the time limit");
+                    requests.Remove(requests.First().Key);
+                }
+                //find the best of the responses it did receive
+                else
+                {
+                    bestRate = BestOffer();
+                    string bestoffer = "The best offer on: " + bestRate.SSN + " loan request, is from: " + bestRate.BankName +
+                               " which offer an interest rate on: " + bestRate.InterestRate;
+                    rabbitConn.Send(bestoffer, requests.First().Key.ReplyTo, requests.First().Key, false);
+
+                    bankCount = 0;
+                    requests.Remove(requests.First().Key);
+                    responses.Clear();
+                }
             }
-            else
-            {
-                //rabbitConn.Send(BestOffer().ToString(), sendToQueueName, false);
-                bestRate = BestOffer();
-                bankCount = 0;
-                requests.Remove(corrID);
-                corrID = null;
-                responses.Clear();
-            }
-            aTimer.Enabled = false;
         }
     }
 }

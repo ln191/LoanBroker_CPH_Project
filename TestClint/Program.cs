@@ -41,8 +41,6 @@ namespace TestClint
 
             string msg = loanRequest.ToString();
             rabbitConn.Send(msg, "groupB.loanRequest", false);
-            //RabbitSender sender = new RabbitSender("loanRequest");
-            //sender.Send(msg);
             Console.WriteLine("our request has now been send, {0} ", msg);
 
             Console.Read();

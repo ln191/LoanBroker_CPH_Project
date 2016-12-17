@@ -67,8 +67,8 @@ namespace MessageGateway
 
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
-            //so it will take one message at the time
-            channel.BasicQos(0, 1, false);
+            //so it will take one message per consumer at the time
+            channel.BasicQos(0, 10, false);
         }
 
         public void Send(string message, string routingKey, bool MsgPersistent)
@@ -82,7 +82,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish("", routingKey, properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} channel", message, routingKey);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} Queue", message, routingKey);
         }
 
         public void Send(string message, bool MsgPersistent, string exchange)
@@ -96,7 +97,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish(exchange, "", properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} exchange", message, exchange);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} exchange", message, exchange);
         }
 
         public void Send(string message, string routingKey, bool MsgPersistent, string exchange)
@@ -110,7 +112,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish(exchange, routingKey, properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} channel", message, routingKey);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} queue", message, routingKey);
         }
 
         public void Send(string message, IBasicProperties header, bool MsgPersistent, string exchange)
@@ -124,7 +127,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish(exchange, "", properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} exchange", message, exchange);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} exchange", message, exchange);
         }
 
         public void Send(string message, string routingKey, IBasicProperties header, bool MsgPersistent)
@@ -138,7 +142,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish("", routingKey, properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} channel", message, routingKey);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} queue", message, routingKey);
         }
 
         public void Send(string message, string routingKey, IBasicProperties header, bool MsgPersistent, string exchange)
@@ -152,7 +157,8 @@ namespace MessageGateway
 
             //Send message
             channel.BasicPublish(exchange, routingKey, properties, messageBuffer);
-            Console.WriteLine("message: {0}, send to {1} channel", message, routingKey);
+            Console.WriteLine();
+            Console.WriteLine("Send message: {0}, send to {1} queue", message, routingKey);
         }
     }
 }
