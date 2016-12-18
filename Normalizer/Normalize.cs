@@ -111,7 +111,6 @@ namespace Normalizer
                         try
                         {
                             TextReader reader = new StringReader(Encoding.UTF8.GetString(body));
-                            Console.WriteLine(Encoding.UTF8.GetString(body));
                             loanResponse = (LoanResponse)myXmlSerializer.Deserialize(reader);
                             Console.WriteLine();
                             Console.WriteLine(" [x] Received {0}", loanResponse.ToString());

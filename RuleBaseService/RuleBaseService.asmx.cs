@@ -21,7 +21,7 @@ namespace RulebaseService
         {
             List<string> queues = new List<string>();
             queues.Add("groupB.json.bank.translator");
-            if (CreditScore >= 500 && Duration >= 6)
+            if (CreditScore >= 50 && Duration >= 6)
             {
                 queues.Add("groupB.xml.bank.translator");
             }
