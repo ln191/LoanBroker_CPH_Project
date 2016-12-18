@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageGateway", "MessageGateway\MessageGateway.csproj", "{617C4E4E-172A-4691-9448-ED77BFDE19F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClint", "TestClint\TestClint.csproj", "{EBF77DC8-748B-414F-8FE6-8B4728036B43}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditScore", "CreditScore\CreditScore.csproj", "{B1338E62-0890-4516-AB13-4FE375296A94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetBanks", "GetBanks\GetBanks.csproj", "{26310710-A959-4421-A3A6-30BDF4253B0B}"
@@ -59,10 +57,6 @@ Global
 		{617C4E4E-172A-4691-9448-ED77BFDE19F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{617C4E4E-172A-4691-9448-ED77BFDE19F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617C4E4E-172A-4691-9448-ED77BFDE19F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBF77DC8-748B-414F-8FE6-8B4728036B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBF77DC8-748B-414F-8FE6-8B4728036B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBF77DC8-748B-414F-8FE6-8B4728036B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBF77DC8-748B-414F-8FE6-8B4728036B43}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1338E62-0890-4516-AB13-4FE375296A94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1338E62-0890-4516-AB13-4FE375296A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1338E62-0890-4516-AB13-4FE375296A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
