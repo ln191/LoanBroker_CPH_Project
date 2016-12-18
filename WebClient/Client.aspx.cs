@@ -20,6 +20,7 @@ namespace WebClient
             String ssn = null;
             double amount = 0;
             int duration = 0;
+            bool Call = true;
 
             try
             {
@@ -34,6 +35,7 @@ namespace WebClient
             {
                 Offer.Text = ex.Message;
                 Offer.Visible = true;
+                Call = false;
             }
             
             try
@@ -49,11 +51,13 @@ namespace WebClient
             {
                 Offer.Text = ex.Message;
                 Offer.Visible = true;
+                Call = false;
             }
             catch(FormatException ex)
             {
                 Offer.Text = "The Amount must be a posetive number";
                 Offer.Visible = true;
+                Call = false;
             }
             try
             {
@@ -67,14 +71,21 @@ namespace WebClient
             {
                Offer.Text = ex.Message;
                 Offer.Visible = true;
+                Call = false;
             }
             catch (FormatException ex)
             {
                 Offer.Text = "The duration must be a posetive number that is no higher than 360";
                 Offer.Visible = true;
+                Call = false;
             }
 
-            Offer.Text = LBC.Call(ssn, amount, duration);
+            if (Call)
+            {
+                Offer.Text = LBC.Call(ssn, amount, duration);
+                Offer.Visible = true;
+            }
+            
         }
     }
 
