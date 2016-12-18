@@ -25,7 +25,7 @@ namespace RulebaseService
             {
                 queues.Add("groupB.xml.bank.translator");
             }
-            if (CreditScore >= 200 && Duration >= 10 && Amount >= 50000)
+            if (CreditScore >= 100 && Duration >= 10 && Amount >= 50000)
             {
                 queues.Add("groupB.our.bank.translator");
             }
