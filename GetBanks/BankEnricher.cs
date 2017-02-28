@@ -23,7 +23,7 @@ namespace GetBanks
         public BankEnricher(string receiveQueueName, string sendToQueueName)
         {
             //Connects to RabbitMQ server
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
             //Declare the queues needed in this program, sets durable to true in case of RabbitMQ breakdown.

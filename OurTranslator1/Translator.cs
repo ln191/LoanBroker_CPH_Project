@@ -19,7 +19,7 @@ namespace OurTranslator1
 
         public Translator(string receiveQueueName)
         {
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
         }

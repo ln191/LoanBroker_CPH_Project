@@ -22,7 +22,7 @@ namespace CreditScore
 
         public CreditEnricher(string receiveQueueName, string sendToQueueName)
         {
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
             this.sendToQueueName = sendToQueueName;
 

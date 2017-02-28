@@ -19,7 +19,7 @@ namespace MessageBank
         public Bank(string receiveQueueName)
         {
             //Connects to RabbitMQ server
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
             //Declare the queues needed in this program, sets durable to true in case of RabbitMQ breakdown.
             rabbitConn.Channel.QueueDeclare(queue: receiveQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);

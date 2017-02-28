@@ -23,7 +23,7 @@ namespace Normalizer
         public Normalize(string sendToQueueName)
         {
             //Establish connection to RabbitMQ server
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
 
             myXmlSerializer = new XmlSerializer(typeof(LoanResponse));
             this.sendToQueueName = sendToQueueName;

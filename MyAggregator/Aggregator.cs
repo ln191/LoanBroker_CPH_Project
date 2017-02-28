@@ -37,7 +37,7 @@ namespace MyAggregator
             requests = new Dictionary<IBasicProperties, LoanRequest>();
             responses = new List<LoanResponse>();
             //Connects to RabbitMQ server
-            rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            rabbitConn = new RabbitConnection();
             this.receiveQueueName = receiveQueueName;
 
             this.requestInfoQueueName = requestInfoQueueName;

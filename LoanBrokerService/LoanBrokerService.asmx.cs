@@ -25,7 +25,7 @@ namespace LoanBrokerService
         public string InvokeLoanBroker(string ssn, double amount, int duration)
         {
             LoanRequest loanRequest = new LoanRequest();
-            RabbitConnection rabbitConn = new RabbitConnection("datdb.cphbusiness.dk", "student", "cph");
+            RabbitConnection rabbitConn = new RabbitConnection();
 
             //set message body content
             loanRequest.SSN = ssn;
